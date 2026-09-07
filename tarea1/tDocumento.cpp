@@ -103,3 +103,28 @@ void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario) {
 
     archivo.close();
 }
+void exportarTextoPlano(const tDocumento& doc, const std::string& rutaSalida){
+    std::ofstream archivo(rutaSalida);
+    if(archivo){
+        bool esPrimeraLinea = true;  
+        const tNodoParrafo* recorredor = doc.head;
+        while(recorredor != nullptr){
+            bool esPrimeraLineaDelParrafo = true;
+            const tNodoLinea* lineaActual = recorredor->info.headLinea;
+            while(lineaActual != nullptr){
+                if(!esPrimeraLinea && !esPrimeraLineaDelParrafo){
+                    archivo << "\n";
+                    }
+                else if(!esPrimeraLinea && esPrimeraLineaDelParrafo){
+                    archivo << "\n\n";
+                    }
+                std::string contenidoLinea(lineaActual->info.listArray, lineaActual->info.listSize);
+                archivo << contenidoLinea;
+                esPrimeraLinea = false;
+                esPrimeraLineaDelParrafo = false;
+                lineaActual = lineaActual->sig;
+            }
+            recorredor = recorredor->sig;
+        }
+    }
+}
