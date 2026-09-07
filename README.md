@@ -27,7 +27,7 @@ mediante make (targets all, run, clean) y tambien mediante g++ main.cpp tListaCa
 Windows 11 con WSL2 (Ubuntu 24.04.1 LTS)
 6.6.87.2-microsoft-standard-WSL2
 
-tListaCaracteres.hpp / .cpp   -> TDA Nivel 1: arreglo dinámico de caracteres
+## tListaCaracteres.hpp / .cpp   -> TDA Nivel 1: arreglo dinámico de caracteres
 tParrafo.hpp / .cpp           -> TDA Nivel 2: lista simple de líneas + reflow
 tDocumento.hpp / .cpp         -> TDA Nivel 3: lista doble de párrafos,
 carga binaria, comandos y exportación
