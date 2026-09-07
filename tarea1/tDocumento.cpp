@@ -52,7 +52,7 @@ void liberarDocumento(tDocumento &doc) {
 }
 
 void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario) {
-    std::ifstream archivo(rutaBinario, std::ios::binary);
+    std::ifstream archivo(rutaBinario.c_str(), std::ios::binary);
     if (!archivo.is_open()) {
         return;
     }
@@ -103,28 +103,203 @@ void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario) {
 
     archivo.close();
 }
-void exportarTextoPlano(const tDocumento& doc, const std::string& rutaSalida){
-    std::ofstream archivo(rutaSalida);
-    if(archivo){
-        bool esPrimeraLinea = true;  
-        const tNodoParrafo* recorredor = doc.head;
-        while(recorredor != nullptr){
-            bool esPrimeraLineaDelParrafo = true;
-            const tNodoLinea* lineaActual = recorredor->info.headLinea;
-            while(lineaActual != nullptr){
-                if(!esPrimeraLinea && !esPrimeraLineaDelParrafo){
-                    archivo << "\n";
-                    }
-                else if(!esPrimeraLinea && esPrimeraLineaDelParrafo){
+
+void exportarTextoPlano(const tDocumento &doc, const std::string &rutaSalida) {
+    std::ofstream archivo(rutaSalida.c_str());
+    if (!archivo.is_open()) {
+        return;
+    }
+
+    bool primeraLineaDoc = true;
+    tNodoParrafo* parrafoActual = doc.head;
+
+    while (parrafoActual != nullptr) {
+        if (parrafoActual->info.cantLineas > 0) {
+            bool primeraLineaParrafo = true;
+            tNodoLinea* lineaActual = parrafoActual->info.headLinea;
+
+            while (lineaActual != nullptr) {
+                if (primeraLineaDoc) {
+                    primeraLineaDoc = false;
+                } else if (primeraLineaParrafo) {
                     archivo << "\n\n";
-                    }
-                std::string contenidoLinea(lineaActual->info.listArray, lineaActual->info.listSize);
-                archivo << contenidoLinea;
-                esPrimeraLinea = false;
-                esPrimeraLineaDelParrafo = false;
+                } else {
+                    archivo << "\n";
+                }
+                primeraLineaParrafo = false;
+
+                for (int i = 0; i < lineaActual->info.listSize; i++) {
+                    archivo << lineaActual->info.listArray[i];
+                }
                 lineaActual = lineaActual->sig;
             }
-            recorredor = recorredor->sig;
+        }
+        parrafoActual = parrafoActual->sig;
+    }
+
+    archivo.close();
+}
+
+void procesarArchivoComandos(tDocumento &doc, const std::string &rutaComandos, const std::string &rutaSalidaDefecto) {
+    std::ifstream archivo(rutaComandos.c_str());
+    if (!archivo.is_open()) {
+        return;
+    }
+
+    std::string linea;
+    while (std::getline(archivo, linea)) {
+        if (!linea.empty() && linea[linea.size() - 1] == '\r') {
+            linea.erase(linea.size() - 1);
+        }
+        if (linea.empty()) {
+            continue;
+        }
+
+        int idx = 0;
+        while (idx < (int)linea.size() && linea[idx] != ' ') {
+            idx++;
+        }
+        std::string comando = linea.substr(0, idx);
+
+        if (comando == "FUSIONAR_LINEA") {
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int p = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                p = p * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int l1 = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                l1 = l1 * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int l2 = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                l2 = l2 * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            tNodoParrafo* nodoP = obtenerCrearParrafo(doc, p);
+            if (nodoP != nullptr) {
+                fusionarLineas(nodoP->info, l1, l2);
+            }
+
+        } else if (comando == "APPEND_LINEA") {
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int p = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                p = p * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int l = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                l = l * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            if (idx < (int)linea.size() && linea[idx] == ' ') {
+                idx++;
+            }
+
+            const char* textoAppend = linea.c_str() + idx;
+            int lenAppend = (int)linea.size() - idx;
+
+            tNodoParrafo* nodoP = obtenerCrearParrafo(doc, p);
+            if (nodoP != nullptr) {
+                tNodoLinea* nodoL = obtenerLinea(nodoP->info, l);
+                if (nodoL != nullptr) {
+                    concatenarTexto(nodoL->info, textoAppend, lenAppend);
+                    if (nodoL->info.listSize > 30) {
+                        reflowInsertar(nodoP->info, nodoL);
+                    }
+                }
+            }
+
+        } else if (comando == "INSERTAR_CHAR") {
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int p = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                p = p * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int l = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                l = l * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int c = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                c = c * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            char caracter = (idx < (int)linea.size()) ? linea[idx] : '\0';
+
+            tNodoParrafo* nodoP = obtenerCrearParrafo(doc, p);
+            if (nodoP != nullptr) {
+                tNodoLinea* nodoL = obtenerLinea(nodoP->info, l);
+                if (nodoL != nullptr) {
+                    insertarCaracter(nodoL->info, c, caracter);
+                    if (nodoL->info.listSize > 30) {
+                        reflowInsertar(nodoP->info, nodoL);
+                    }
+                }
+            }
+
+        } else if (comando == "BORRAR_CHAR") {
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int p = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                p = p * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int l = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                l = l * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            int c = 0;
+            while (idx < (int)linea.size() && linea[idx] >= '0' && linea[idx] <= '9') {
+                c = c * 10 + (linea[idx] - '0');
+                idx++;
+            }
+
+            tNodoParrafo* nodoP = obtenerCrearParrafo(doc, p);
+            if (nodoP != nullptr) {
+                tNodoLinea* nodoL = obtenerLinea(nodoP->info, l);
+                if (nodoL != nullptr) {
+                    borrarCaracter(nodoL->info, c);
+                    if (nodoL->info.listSize < 30 && nodoL->sig != nullptr) {
+                        reflowBorrar(nodoP->info, nodoL);
+                    }
+                }
+            }
+
+        } else if (comando == "GUARDAR") {
+            while (idx < (int)linea.size() && linea[idx] == ' ') idx++;
+            std::string rutaGuardado = rutaSalidaDefecto;
+            if (idx < (int)linea.size()) {
+                rutaGuardado = linea.substr(idx);
+            }
+            exportarTextoPlano(doc, rutaGuardado);
+            break;
         }
     }
+
+    archivo.close();
 }
