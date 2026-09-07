@@ -1,5 +1,5 @@
 #include "tDocumento.hpp"
-
+#include <fstream>
 void inicializarDocumento(tDocumento &doc) {
     doc.head = nullptr;
     doc.tail = nullptr;
