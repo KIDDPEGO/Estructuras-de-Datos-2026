@@ -33,18 +33,6 @@ void liberarParrafo ( tParrafo & parrafo ){
     parrafo.tailLinea = nullptr;
     parrafo.cantLineas = 0;
 }
-void liberarParrafo ( tParrafo & parrafo ){
-    tNodoLinea* actual = parrafo.headLinea;
-    while(actual != nullptr){
-        tNodoLinea* siguiente = actual->sig;
-        liberarLista(actual->info);
-        delete actual;
-        actual = siguiente;
-    }
-    parrafo.headLinea = nullptr;
-    parrafo.tailLinea = nullptr;
-    parrafo.cantLineas = 0;
-}
 void reflowInsertar(tParrafo& parrafo, tNodoLinea* nodoActual){
     tListaCaracteres x;
     inicializarLista(x, 1);
@@ -67,3 +55,36 @@ void reflowInsertar(tParrafo& parrafo, tNodoLinea* nodoActual){
     }
     liberarLista(x);
 }
+void fusionarLineas ( tParrafo & parrafo , int nroL1 , int nroL2 ){
+    tNodoLinea* actual = obtenerLinea(parrafo, nroL1);
+    tNodoLinea* siguiente = nullptr;  
+    if(actual != nullptr){
+        siguiente = actual->sig; 
+        }
+    if(actual != nullptr && siguiente != nullptr){
+        concatenarTexto(actual->info, siguiente->info.listArray,siguiente->info.listSize);
+        actual->sig = siguiente->sig;
+        siguiente->sig = nullptr;
+        liberarLista(siguiente->info);
+        delete siguiente;
+        tNodoLinea* nodoFusionado = actual;
+        while(actual->sig != nullptr){
+            actual->sig->nro_linea_parrafo = actual->sig->nro_linea_parrafo - 1;
+            actual = actual->sig;
+        }
+        parrafo.cantLineas--;
+        parrafo.tailLinea = actual;
+        reflowInsertar(parrafo,nodoFusionado);
+        }
+}
+tNodoLinea* obtenerLinea(tParrafo& parrafo, int nroLinea){
+    tNodoLinea* actual = parrafo.headLinea;
+    while(actual != nullptr){
+    if(actual->nro_linea_parrafo == nroLinea){
+        return actual;
+        }
+        actual = actual->sig;   
+    }
+    return nullptr;
+}
+
