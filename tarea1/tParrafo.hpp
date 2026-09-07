@@ -13,7 +13,7 @@ struct tParrafo {
     int cantLineas;
 };
 
-void inicializarParrafo(tParrafo& parrafo, int idParrafo);
+void inicializarParrafo(tParrafo& parrafo);
 void agregarLineaAlFinal(tParrafo& parrafo, const tListaCaracteres& linea);
 void fusionarLineas(tParrafo& parrafo, int nroL1, int nroL2);
 void reflowInsertar(tParrafo& parrafo, tNodoLinea* nodoActual);
