@@ -1,7 +1,7 @@
 # Estructuras-de-Datos-2026
 Repositorio de tareas - Estructuras de Datos (INF-20325) 2026-2 | UTFSM
 
-## Integrantes - Luciano Cantillana Salinas - Nombre Apellido1 Apellido2 (Juako)
+### Integrantes - Luciano Cantillana Salinas - Nombre Apellido1 Apellido2 (Juako)
 
 El programa reconstruye un documento el cual esta fracmentado en un binaro mediante chunks, lo estructura en memoria usando tres TDA jerárquicos, y luego aplica una secuencia de comandos de edición (fusiones, inserciones, borrados,etc).
 el programa consta de 4 fases:
@@ -15,7 +15,7 @@ los párrafos quedan en una lista doblemente enlazada (tDocumento), y cada uno c
 ## 4. Exportación:
 (exportarTextoPlano): escribe el resultado final a un archivo .txt plano mediante el comando GUARDAR.
 
-## Características técnicas:
+### Características técnicas:
 
 ## Compilador: 
 g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
@@ -27,11 +27,13 @@ mediante make (targets all, run, clean) y tambien mediante g++ main.cpp tListaCa
 Windows 11 con WSL2 (Ubuntu 24.04.1 LTS)
 6.6.87.2-microsoft-standard-WSL2
 
+### Estructura de archivos
+
 ## tListaCaracteres.hpp / .cpp   -> TDA Nivel 1: arreglo dinámico de caracteres
-tParrafo.hpp / .cpp           -> TDA Nivel 2: lista simple de líneas + reflow
-tDocumento.hpp / .cpp         -> TDA Nivel 3: lista doble de párrafos,
-carga binaria, comandos y exportación
-main.cpp                      -> Orquesta las 4 fases del programa
-Makefile                      -> targets: all, run, clean
-comandos.txt / documento.bin  -> Caso de prueba de ejemplo
-resultado.txt                 -> Salida esperada para el caso de prueba
+## tParrafo.hpp / .cpp           -> TDA Nivel 2: lista simple de líneas + reflow
+## tDocumento.hpp / .cpp         -> TDA Nivel 3: lista doble de párrafos,
+## carga binaria, comandos y exportación
+## main.cpp                      -> Orquesta las 4 fases del programa
+## Makefile                      -> targets: all, run, clean
+## comandos.txt / documento.bin  -> Caso de prueba de ejemplo
+## resultado.txt                 -> Salida esperada para el caso de prueba
