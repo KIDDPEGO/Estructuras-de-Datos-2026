@@ -2,7 +2,17 @@
 #define TDOCUMENTO_HPP
 
 #include "tParrafo.hpp"
+struct tNodoLinea{
+    tNodoLinea* sig;
+    int nro_linea_parrafo;
+    tListaCaracteres info;
+};
 
+struct tParrafo {
+    tNodoLinea* headLinea;
+    tNodoLinea* tailLinea;
+    int cantLineas;
+};
 struct tNodoParrafo {
     tNodoParrafo* ant;
     tNodoParrafo* sig;
