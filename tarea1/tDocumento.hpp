@@ -19,5 +19,6 @@ struct tDocumento {
 void inicializarDocumento(tDocumento &doc);
 tNodoParrafo* obtenerCrearParrafo(tDocumento &doc, int idParrafo);
 void liberarDocumento(tDocumento &doc);
+void exportarTextoPlano(const tDocumento& doc, const std::string& rutaSalida);
 
 #endif
