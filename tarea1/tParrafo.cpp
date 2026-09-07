@@ -87,4 +87,32 @@ tNodoLinea* obtenerLinea(tParrafo& parrafo, int nroLinea){
     }
     return nullptr;
 }
+void reflowBorrar(tParrafo& parrafo, tNodoLinea* nodoActual){
+    bool extraccion = false;
+    while (nodoActual->info.listSize < 30 && nodoActual->sig != nullptr){
+        if(nodoActual->sig->info.listSize == 0){
+            tNodoLinea* y = nodoActual->sig;
+            nodoActual->sig = y->sig;  
+            if(parrafo.tailLinea == y){  
+                parrafo.tailLinea = nodoActual;        
+                }
+        liberarLista(y->info);
+        delete y;
+        parrafo.cantLineas--;
+        tNodoLinea* z = nodoActual;
+        while(z->sig !=nullptr){
+            z->sig->nro_linea_parrafo = z->sig->nro_linea_parrafo-1;
+            z = z->sig;
+        }
+        parrafo.tailLinea = z;
+        }
+        if(nodoActual->sig != nullptr){
+        insertarCaracter(nodoActual->info, nodoActual->info.listSize, borrarCaracter(nodoActual->sig->info, 0));
+            }
+        extraccion = true;
+        }
+        if(nodoActual->sig != nullptr && extraccion == true){
+        reflowBorrar(parrafo, nodoActual->sig);
+    }
+}
 
