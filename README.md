@@ -10,3 +10,7 @@ el programa consta de 4 fases:
 (cargarDesdeBinarioChunks): lee el .bin por bloques de tamaño fijo y reconstruye las líneas de cada párrafo.
 ## 2. Estructuración en memoria: 
 los párrafos quedan en una lista doblemente enlazada (tDocumento), y cada uno con sus líneas en una lista simplemente enlazada (tParrafo).
+## 3. Edición por comandos y reflow:
+(procesarArchivoComandos): ejecuta FUSIONAR_LINEA, APPEND_LINEA, INSERTAR_CHAR y BORRAR_CHAR desde un archivo de texto, tambien disparando las funciones reflowinsertar y reflowborrar en cascada para asegurarse de que todas las lineas queden con el formato de 30 lineas.
+## 4. Exportación:
+(exportarTextoPlano): escribe el resultado final a un archivo .txt plano mediante el comando GUARDAR.
