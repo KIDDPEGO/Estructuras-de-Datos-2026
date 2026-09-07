@@ -1,12 +1,42 @@
 #include "tDocumento.hpp"
-#include <fstream>
+
+/*****
+* void inicializarDocumento
+******
+* Inicializa el documento dejando los punteros head y tail en nullptr
+* y la cantidad de parrafos en 0.
+******
+* Input:
+* tDocumento &doc: Documento que se va a inicializar.
+******
+* Returns:
+* void, no retorna nada.
+*****/
 void inicializarDocumento(tDocumento &doc) {
     doc.head = nullptr;
     doc.tail = nullptr;
     doc.totalParrafos = 0;
 }
 
+/*****
+* tNodoParrafo* obtenerCrearParrafo
+******
+* Busca un parrafo por su id. Si el id ya existe lo busca recorriendo la lista,
+* y si el id es mayor a la cantidad actual de parrafos, crea en orden los parrafos
+* que faltan hasta llegar a ese id y los conecta al final de la lista doble.
+******
+* Input:
+* tDocumento &doc: Documento donde se busca o crean los parrafos.
+* int idParrafo: Numero del parrafo que se busca o se quiere crear.
+******
+* Returns:
+* tNodoParrafo*, puntero al nodo del parrafo correspondiente, o nullptr si no se encuentra.
+*****/
 tNodoParrafo* obtenerCrearParrafo(tDocumento &doc, int idParrafo) {
+    if (idParrafo <= 0) {
+        return nullptr;
+    }
+
     if (idParrafo <= doc.totalParrafos) {
         tNodoParrafo* actual = doc.head;
         while (actual != nullptr) {
@@ -38,6 +68,19 @@ tNodoParrafo* obtenerCrearParrafo(tDocumento &doc, int idParrafo) {
     return doc.tail;
 }
 
+/*****
+* void liberarDocumento
+******
+* Libera la memoria de todos los parrafos de la lista doble llamando a
+* liberarParrafo en cada uno y haciendo delete a los nodos, dejando el
+* documento vacio.
+******
+* Input:
+* tDocumento &doc: Documento al que se le va a liberar la memoria.
+******
+* Returns:
+* void, no retorna nada.
+*****/
 void liberarDocumento(tDocumento &doc) {
     tNodoParrafo* actual = doc.head;
     while (actual != nullptr) {
@@ -51,6 +94,20 @@ void liberarDocumento(tDocumento &doc) {
     doc.totalParrafos = 0;
 }
 
+/*****
+* void cargarDesdeBinarioChunks
+******
+* Abre el archivo binario y lo lee por bloques (chunks). Lee la cabecera con
+* el total de chunks y el tamano de cada bloque, y luego va sacando los fragmentos
+* de texto segun sus bytes utiles para agregarlos como lineas al parrafo que le toca.
+******
+* Input:
+* tDocumento &doc: Documento donde se guardara el texto cargado.
+* const std::string &rutaBinario: Ruta del archivo binario a leer.
+******
+* Returns:
+* void, no retorna nada.
+*****/
 void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario) {
     std::ifstream archivo(rutaBinario.c_str(), std::ios::binary);
     if (!archivo.is_open()) {
@@ -104,6 +161,20 @@ void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario) {
     archivo.close();
 }
 
+/*****
+* void exportarTextoPlano
+******
+* Escribe todo el documento en un archivo de texto plano. Coloca saltos de
+* linea normales entre las lineas de un parrafo y saltos dobles para separar
+* parrafos distintos, sin dejar lineas vacias extra al final.
+******
+* Input:
+* const tDocumento &doc: Documento que se quiere guardar.
+* const std::string &rutaSalida: Ruta del archivo de texto donde se escribira.
+******
+* Returns:
+* void, no retorna nada.
+*****/
 void exportarTextoPlano(const tDocumento &doc, const std::string &rutaSalida) {
     std::ofstream archivo(rutaSalida.c_str());
     if (!archivo.is_open()) {
@@ -140,6 +211,21 @@ void exportarTextoPlano(const tDocumento &doc, const std::string &rutaSalida) {
     archivo.close();
 }
 
+/*****
+* void procesarArchivoComandos
+******
+* Lee el archivo de comandos linea por linea, identifica cual instruccion se
+* debe ejecutar y saca sus parametros para llamar a la funcion que corresponda
+* (fusionar, agregar texto, insertar o borrar letras) y termina al guardar.
+******
+* Input:
+* tDocumento &doc: Documento sobre el que se aplican los comandos.
+* const std::string &rutaComandos: Ruta del archivo con las instrucciones.
+* const std::string &rutaSalidaDefecto: Ruta de guardado por defecto si no se indica otra.
+******
+* Returns:
+* void, no retorna nada.
+*****/
 void procesarArchivoComandos(tDocumento &doc, const std::string &rutaComandos, const std::string &rutaSalidaDefecto) {
     std::ifstream archivo(rutaComandos.c_str());
     if (!archivo.is_open()) {
