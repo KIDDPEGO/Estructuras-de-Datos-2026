@@ -1,18 +1,10 @@
 #ifndef TDOCUMENTO_HPP
 #define TDOCUMENTO_HPP
 
+#include <string>
+#include <fstream>
 #include "tParrafo.hpp"
-struct tNodoLinea{
-    tNodoLinea* sig;
-    int nro_linea_parrafo;
-    tListaCaracteres info;
-};
 
-struct tParrafo {
-    tNodoLinea* headLinea;
-    tNodoLinea* tailLinea;
-    int cantLineas;
-};
 struct tNodoParrafo {
     tNodoParrafo* ant;
     tNodoParrafo* sig;
@@ -29,6 +21,7 @@ struct tDocumento {
 void inicializarDocumento(tDocumento &doc);
 tNodoParrafo* obtenerCrearParrafo(tDocumento &doc, int idParrafo);
 void liberarDocumento(tDocumento &doc);
-void exportarTextoPlano(const tDocumento& doc, const std::string& rutaSalida);
+
+void cargarDesdeBinarioChunks(tDocumento &doc, const std::string &rutaBinario);
 
 #endif
