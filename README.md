@@ -14,3 +14,24 @@ los párrafos quedan en una lista doblemente enlazada (tDocumento), y cada uno c
 (procesarArchivoComandos): ejecuta FUSIONAR_LINEA, APPEND_LINEA, INSERTAR_CHAR y BORRAR_CHAR desde un archivo de texto, tambien disparando las funciones reflowinsertar y reflowborrar en cascada para asegurarse de que todas las lineas queden con el formato de 30 lineas.
 ## 4. Exportación:
 (exportarTextoPlano): escribe el resultado final a un archivo .txt plano mediante el comando GUARDAR.
+
+## Características técnicas:
+
+## Compilador: 
+g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+## Estándar de C++: 
+C++11
+## Compilación:
+mediante make (targets all, run, clean) y tambien mediante g++ main.cpp tListaCaracteres.cpp tParrafo.cpp tDocumento.cpp -o tarea1 -Wall
+## Sistema operativo utilizado para desarrollo y pruebas:
+Windows 11 con WSL2 (Ubuntu 24.04.1 LTS)
+6.6.87.2-microsoft-standard-WSL2
+
+tListaCaracteres.hpp / .cpp   -> TDA Nivel 1: arreglo dinámico de caracteres
+tParrafo.hpp / .cpp           -> TDA Nivel 2: lista simple de líneas + reflow
+tDocumento.hpp / .cpp         -> TDA Nivel 3: lista doble de párrafos,
+carga binaria, comandos y exportación
+main.cpp                      -> Orquesta las 4 fases del programa
+Makefile                      -> targets: all, run, clean
+comandos.txt / documento.bin  -> Caso de prueba de ejemplo
+resultado.txt                 -> Salida esperada para el caso de prueba
