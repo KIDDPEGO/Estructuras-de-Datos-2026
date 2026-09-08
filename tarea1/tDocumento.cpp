@@ -372,6 +372,18 @@ void procesarArchivoComandos(tDocumento &doc, const std::string &rutaComandos, c
                     borrarCaracter(nodoL->info, c);
                     if (nodoL->info.listSize < 30 && nodoL->sig != nullptr) {
                         reflowBorrar(nodoP->info, nodoL);
+                    } else if (nodoL->info.listSize == 0 && nodoP->info.cantLineas > 1 && nodoL == nodoP->info.tailLinea) {
+                        tNodoLinea* ant = nodoP->info.headLinea;
+                        while (ant != nullptr && ant->sig != nodoL) {
+                            ant = ant->sig;
+                        }
+                        if (ant != nullptr) {
+                            ant->sig = nullptr;
+                            nodoP->info.tailLinea = ant;
+                            nodoP->info.cantLineas--;
+                            liberarLista(nodoL->info);
+                            delete nodoL;
+                        }
                     }
                 }
             }
