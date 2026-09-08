@@ -37,3 +37,10 @@ Windows 11 con WSL2 (Ubuntu 24.04.1 LTS)
 ## Makefile                      -> targets: all, run, clean
 ## comandos.txt / documento.bin  -> Caso de prueba de ejemplo
 ## resultado.txt                 -> Salida esperada para el caso de prueba
+
+## Pruebas de memoria:
+valgrind --leak-check=full ./tarea1 documento.bin comandos.txt salida.txt
+
+## Decisiones de diseño
+Indexación: las columnas dentro de una línea (tListaCaracteres, INSERTAR_CHAR, BORRAR_CHAR) son 0-indexadas. Los párrafos y las líneas dentro de un párrafo son 1-indexados (FUSIONAR_LINEA, APPEND_LINEA, obtenerLinea).
+
