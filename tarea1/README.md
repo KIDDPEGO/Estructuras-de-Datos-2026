@@ -4,8 +4,8 @@ Repositorio de tareas - Estructuras de Datos (INF-20325) 2026-2 | UTFSM
 
 ## Integrantes
 
-- Luciano Cantillana Salinas
-- Joaquín Pego Guerrero
+- Luciano Cantillana Salinas - Rol: 202511593-k
+- Joaquín Pego Guerrero - Rol: 202573638-1
 
 ## Descripción del proyecto
 
