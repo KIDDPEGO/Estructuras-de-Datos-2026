@@ -133,3 +133,19 @@ tNodoAVL* tAVL::insertarRec(tNodoAVL* n, const Carta& c, bool& insertado){
     }
     return(n);
 }
+bool tAVL::buscar(int id, Carta& out) const {
+     tNodoAVL* actual = raiz;
+    while (actual != NULL) {
+        if(id < actual->dato.id){
+            actual=actual->izq;
+        }
+        else if(id > actual->dato.id){
+            actual=actual->der;
+        }
+        else(id == actual->dato.id){
+            out = actual->dato;
+            return true;
+        }
+    }
+    return false;
+}
