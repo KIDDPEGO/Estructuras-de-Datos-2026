@@ -23,6 +23,7 @@ void actualizarAltura(tNodoAVL* n);
 
 private :
 tNodoAVL * raiz ;
+tNodoAVL* insertarRec(tNodoAVL* n, const Carta& c, bool& insertado);
 int altura ( tNodoAVL * n ) const ;
 int factorBalance ( tNodoAVL * n ) const ;
 tNodoAVL * rotDer ( tNodoAVL * n ); 
