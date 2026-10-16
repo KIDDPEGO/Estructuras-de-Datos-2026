@@ -146,3 +146,27 @@ bool tAVL::buscar(int id, Carta& out) const {
     }
     return false;
 }
+void tAVL::preOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const {
+    if (n == NULL) {
+        return;
+    }
+    if (!primero) {
+        salida << ' ';
+    }
+    salida << n->dato.id << '(' << prof << ')';    
+    primero = false;
+    preOrden(n->izq, prof+1, salida, primero);    
+    preOrden(n->der, prof+1, salida, primero);    
+}
+void tAVL::inOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const {
+    if (n == NULL) {
+        return;
+    }
+    inOrden(n->izq, prof+1, salida, primero);
+    if (!primero) {
+        salida << ' ';
+    }
+    salida << n->dato.id << '(' << prof << ')';    
+    primero = false;    
+    inOrden(n->der, prof+1, salida, primero);    
+}
