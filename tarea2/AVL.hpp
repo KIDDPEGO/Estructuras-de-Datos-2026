@@ -23,6 +23,8 @@ void actualizarAltura(tNodoAVL* n);
 
 private :
 tNodoAVL * raiz ;
+void preOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const;
+void inOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const;
 tNodoAVL* insertarRec(tNodoAVL* n, const Carta& c, bool& insertado);
 int altura ( tNodoAVL * n ) const ;
 int factorBalance ( tNodoAVL * n ) const ;
