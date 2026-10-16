@@ -20,13 +20,13 @@ bool buscar (int id , Carta & out ) const ;
 void guardarRecorridos ( ostream & salida ) const ; 
 void clear () ;
 void actualizarAltura(tNodoAVL* n);
-void liberar(tNodoAVL* n);
 
 private :
 tNodoAVL * raiz ;
 void preOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const;
 void inOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) const;
 tNodoAVL* insertarRec(tNodoAVL* n, const Carta& c, bool& insertado);
+void liberar(tNodoAVL* n);
 int altura ( tNodoAVL * n ) const ;
 int factorBalance ( tNodoAVL * n ) const ;
 tNodoAVL * rotDer ( tNodoAVL * n ); 
