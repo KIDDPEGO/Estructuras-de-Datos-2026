@@ -170,3 +170,21 @@ void tAVL::inOrden(tNodoAVL* n, int prof, std::ostream& salida, bool& primero) c
     primero = false;    
     inOrden(n->der, prof+1, salida, primero);    
 }
+tAVL::tAVL() {               
+    raiz = NULL;
+}
+tAVL::~tAVL(){                        
+    clear();
+}
+void tAVL::clear (){
+    liberar(raiz);
+    raiz=NULL;
+}
+void tAVL::liberar(tNodoAVL* n){
+    if(n == NULL){
+        return;
+    }
+    liberar(n->izq);
+    liberar(n->der);
+    delete n;
+}
