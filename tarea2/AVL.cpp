@@ -142,7 +142,7 @@ bool tAVL::buscar(int id, Carta& out) const {
         else if(id > actual->dato.id){
             actual=actual->der;
         }
-        else(id == actual->dato.id){
+        else{
             out = actual->dato;
             return true;
         }
