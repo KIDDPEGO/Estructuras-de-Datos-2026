@@ -20,6 +20,7 @@ bool buscar (int id , Carta & out ) const ;
 void guardarRecorridos ( ostream & salida ) const ; 
 void clear () ;
 void actualizarAltura(tNodoAVL* n);
+void liberar(tNodoAVL* n);
 
 private :
 tNodoAVL * raiz ;
