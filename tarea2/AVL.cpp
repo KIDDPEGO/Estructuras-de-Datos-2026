@@ -95,12 +95,9 @@ tNodoAVL* tAVL::rotDerIzq(tNodoAVL* n) {
     return rotIzq(n);
 }
 bool tAVL::insertar(const Carta& c) {
-    Carta tmp;
-    if (buscar(c.id, tmp)) {      // ya existe
-        return false;
-    }
-    raiz = insertarRec(raiz, c);  // seguro que es nuevo
-    return true;
+    bool ok = false;
+    raiz = insertarRec(raiz, c, ok);
+    return ok;
 }
 tNodoAVL* tAVL::insertarRec(tNodoAVL* n, const Carta& c, bool& insertado){
     if(n == NULL){
