@@ -54,3 +54,27 @@ int tAVL::factorBalance(tNodoAVL* n) const {
     }
     return 0;
 }
+tNodoAVL* tAVL::rotDer(tNodoAVL* n) {
+    tNodoAVL* y = n->izq;
+    n->izq = y->der;
+    y->der = n;
+    actualizarAltura(n);
+    actualizarAltura(y);
+    return y;
+}
+/* ****
+*    void tAVL::actualizarAltura
+******
+*    Recalcula la altura de un nodo a partir de las alturas de sus hijos.
+******
+*    Input :
+*        tNodoAVL* n : nodo cuya altura se actualiza 
+******
+*    Returns :
+*        void
+**** */
+void tAVL::actualizarAltura(tNodoAVL* n) {
+    if (n != NULL) {
+        n->altura = 1 + maxEntero(altura(n->izq), altura(n->der));
+    }
+}
