@@ -94,3 +94,42 @@ tNodoAVL* tAVL::rotDerIzq(tNodoAVL* n) {
     n->der = rotDer(n->der);
     return rotIzq(n);
 }
+bool tAVL::insertar(const Carta& c) {
+    Carta tmp;
+    if (buscar(c.id, tmp)) {      // ya existe
+        return false;
+    }
+    raiz = insertarRec(raiz, c);  // seguro que es nuevo
+    return true;
+}
+tNodoAVL* tAVL::insertarRec(tNodoAVL* n, const Carta& c, bool& insertado){
+    if(n == NULL){
+        n = new tNodoAVL(c);
+        insertado = true;
+        return n;
+    }
+    if(c.id < n->dato.id){
+        n->izq = insertarRec(n->izq, c, insertado);
+    }
+    else if(c.id > n->dato.id){
+        n->der = insertarRec(n->der, c, insertado);
+    }
+    else{
+        insertado = false;
+        return n;
+    }
+    actualizarAltura(n);
+    if(factorBalance(n)== -2 && factorBalance(n->izq)== -1){
+        return rotDer(n);
+    }
+    if(factorBalance(n)== -2 && factorBalance(n->izq)== 1){
+        return rotIzqDer(n);
+    }
+    if(factorBalance(n)== 2 && factorBalance(n->der)== 1){
+        return rotIzq(n);
+    }
+    if(factorBalance(n)== 2 && factorBalance(n->der)== -1){
+        return rotDerIzq(n);
+    }
+    return(n);
+}
