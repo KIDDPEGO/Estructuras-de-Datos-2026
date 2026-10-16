@@ -78,3 +78,19 @@ void tAVL::actualizarAltura(tNodoAVL* n) {
         n->altura = 1 + maxEntero(altura(n->izq), altura(n->der));
     }
 }
+tNodoAVL* tAVL::rotIzq(tNodoAVL* n) {
+    tNodoAVL* y = n->der;
+    n->der = y->izq;
+    y->izq = n;
+    actualizarAltura(n);
+    actualizarAltura(y);
+    return y;
+}
+tNodoAVL* tAVL::rotIzqDer(tNodoAVL* n) {
+    n->izq = rotIzq(n->izq);
+    return rotDer(n);
+}
+tNodoAVL* tAVL::rotDerIzq(tNodoAVL* n) {
+    n->der = rotDer(n->der);
+    return rotIzq(n);
+}
