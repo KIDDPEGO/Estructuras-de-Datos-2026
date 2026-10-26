@@ -133,8 +133,46 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
         else if (cmd == "ATACAR") {
             cerr << "TODO ATACAR\n";
         }
-        else if (cmd == "DESCARTAR") {
-            cerr << "TODO DESCARTAR\n";
+        else if (cmd == "ATACAR") {
+            if(derrota == true) continue;
+            if(hayArg == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            if(horda.vacia()){
+                cout << "ATACAR -> HORDA_VACIA\n";
+            }
+            else {
+                Enemigo& f = horda.frenteRef();
+                if(!horda.vacia()){
+                    Enemigo& f = horda.frenteRef();
+                    int dano = minimo(4, f.vidaActual);
+                    f.vidaActual = f.vidaActual - dano;
+                    turno++;
+                    energia = 3;
+                    cout << "ATACAR -> dmg=" << dano << " turno=" << turno;
+                }
+                if(f.vidaActual == 0){
+                    cout << " MATA "<< f.id;
+                    horda.desencolar();
+                }
+                else {
+                    int n = minimo(f.ataque, vida); 
+                    vida = vida - n;
+                    cout << " CONTRAATAQUE -" << n << " (hp=" << vida << ")";
+                    if(vida == 0){
+                        derrota = true;
+                        }
+                    }
+                    cout << endl;
+                }
+            if(derrota == true){
+                cout << "DERROTA\n";
+            }
+            if(horda.vacia() && !victoriaImpresa){
+                cout << "VICTORIA\n";
+                victoriaImpresa = true;
+            }
         }
         else if (cmd == "IMPRIMIR_MANO") {
             cerr << "TODO IMPRIMIR_MANO\n";
