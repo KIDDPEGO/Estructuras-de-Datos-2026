@@ -195,7 +195,22 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             }
         }
         else if (cmd == "IMPRIMIR_MANO") {
-            cerr << "TODO IMPRIMIR_MANO\n";
+            if(hayArg == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            if (tamMano == 0) {
+                cout << "MANO: (vacia)\n";
+                continue;
+            }
+            else {
+                cout << "MANO:";
+                for (int i = 0; i < tamMano; i++) {
+                    Carta c = mano[i];
+                    cout << " " << c.id;
+                }
+                cout << endl;
+            }
         }
         else if (cmd == "IMPRIMIR_HORDA") {
             cerr << "TODO IMPRIMIR_HORDA\n";
