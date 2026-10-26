@@ -219,7 +219,11 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             cerr << "TODO IMPRIMIR_BESTIARIO\n";
         }
         else if (cmd == "IMPRIMIR_AVL") {
-            cerr << "TODO IMPRIMIR_AVL\n";
+            if(hayArg == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            grimorio.guardarRecorridos(cout);
         }
         else if (cmd == "GUARDAR") {
             cerr << "TODO GUARDAR\n";
