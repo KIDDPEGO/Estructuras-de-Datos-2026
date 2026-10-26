@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+#include "Juego.hpp"
 using namespace std;
 
 static bool validarPos(const string& texto, int& valor) {
@@ -21,6 +22,10 @@ static bool validarPos(const string& texto, int& valor) {
     valor = (int)n;
     return true;
 }
+int minimo(int a, int b){
+    if(a>b) return a;
+    else return b;
+}
 
 void procesarComandos(const string& rutaComandos, const string& rutaSalida,
                       Carta mano[5], int& tamMano,
@@ -31,6 +36,11 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
     ifstream archivo(rutaComandos);
     string linea;
     bool derrota = false;
+    int pos;
+    int energia = 3;
+    int vida = 30;
+    int turno = 0;
+    bool victoriaImpresa = false;
 
     while (getline(archivo, linea)) {
         istringstream ss(linea);
@@ -150,7 +160,7 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             }
             tamMano--;
             descarte.push(c);
-            cout << "DESCARTAR " << pos <<" -> " << c.id\n;
+            cout << "DESCARTAR " << pos << " -> " << c.id << "\n";
 
         }
         else if (cmd == "ATACAR") {
