@@ -80,7 +80,55 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             tamMano++;
             cout << "ROBAR -> " << c.id << " (mano=" << tamMano << ")" << endl;
         } else if (cmd == "JUGAR") {
-            cerr << "TODO JUGAR\n";
+            if (derrota) continue;
+
+            if(hayArg == false || hayExtra == true ){
+                cerr << "falta un argumento o sobra un argumento\n";
+                continue;
+            }
+            if(!validarPos(arg, pos)){
+                cerr << "posicion invalida\n";
+                continue;
+            }
+            if(pos < 1 || pos > tamMano){
+                cout << "JUGAR " << arg << " -> POS_INVALIDA\n";
+                continue;
+            }
+            Carta c = mano[pos - 1];
+            if(c.coste > energia){
+                cout << "JUGAR " << arg << " -> ENERGIA_INSUFICIENTE\n";
+                continue;
+            }
+            energia = energia - c.coste;
+            for (int i=(pos - 1); i<tamMano - 1;i++){
+                mano[i]=mano[i+1];
+            }
+            tamMano--;
+            descarte.push(c);
+            cout << "JUGAR " << pos << " -> " << c.id << " (energia=" << energia <<")";
+            
+            if(!horda.vacia()){
+            Enemigo& f = horda.frenteRef();
+            int dano = minimo(c.ataque, f.vidaActual);
+            f.vidaActual = f.vidaActual - dano;
+            if(f.vidaActual == 0){
+                cout << " MATA " << f.id;
+                horda.desencolar();
+            }
+            }
+            if(c.efecto == CURACION){
+                int n = minimo(3, 30 - vida);
+                vida = vida + n;
+                if(n >= 1){
+                    cout << " CURA +" << n;
+                }
+            }
+            cout << endl;
+            if(horda.vacia() && victoriaImpresa == false){
+                cout << "VICTORIA\n";
+                victoriaImpresa = true;
+            }
+
         }
         else if (cmd == "ATACAR") {
             cerr << "TODO ATACAR\n";
