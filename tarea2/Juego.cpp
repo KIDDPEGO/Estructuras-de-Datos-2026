@@ -130,8 +130,28 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             }
 
         }
-        else if (cmd == "ATACAR") {
-            cerr << "TODO ATACAR\n";
+        else if (cmd == "DESCARTAR") {
+            if(derrota == true) continue;
+            if(hayArg == false || hayExtra == true ){
+                cerr << "falta un argumento o sobra un argumento\n";
+                continue;
+            }
+            if(!validarPos(arg, pos)){
+                cerr << "posicion invalida\n";
+                continue;
+            }
+            if(pos < 1 || pos > tamMano){
+                cout << "DESCARTAR " << pos << " -> " << arg << "\n";
+                continue;
+            }
+            Carta c = mano[pos - 1];
+            for (int i=(pos - 1); i<tamMano - 1;i++){
+                mano[i]=mano[i+1];
+            }
+            tamMano--;
+            descarte.push(c);
+            cout << "DESCARTAR " << pos <<" -> " << c.id\n;
+
         }
         else if (cmd == "ATACAR") {
             if(derrota == true) continue;
