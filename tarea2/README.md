@@ -61,10 +61,14 @@ make          # compila y genera el ejecutable tarea2
 make run      # compila y ejecuta con inicio.txt partida.txt arbol.txt
 make clean    # borra el ejecutable
 ```
+```bash
 ./tarea2 <inicio.txt> <comandos.txt> <arbol.txt>
-argv[1]: archivo de inicio.
-argv[2]: archivo de comandos de la partida.
-argv[3]: ruta por defecto de GUARDAR cuando se invoca sin argumento.
+```
+
+- `argv[1]`: archivo de inicio.
+- `argv[2]`: archivo de comandos de la partida.
+- `argv[3]`: ruta por defecto de `GUARDAR` cuando se invoca sin argumento.
+
 ## Pruebas de memoria
 
 ```bash
@@ -120,4 +124,4 @@ Sea n la cantidad de elementos de la estructura.
 ## Decisiones de diseño
 - **Tipos.hpp:** contiene los struct Carta y Enemigo, se uso enums para los efectos(NINGUNO,
   FUEGO, HIELO, VENENO y CURACION) y el operator<< de Enemigo, declarado inline
-  para evitar errores de enlazado por definición múltiple.
+  para evitar errores de enlazado por definición múltiple. tampoco se uso tipos.cpp.
