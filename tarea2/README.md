@@ -64,11 +64,12 @@ make clean    # borra el ejecutable
 ```bash
 ./tarea2 <inicio.txt> <comandos.txt> <arbol.txt>
 ```
+`inicio.txt` y `partida.txt` son los ejemplos de la Suite A, incluidos solo para que `make run` funcione.
 
 - `argv[1]`: archivo de inicio.
 - `argv[2]`: archivo de comandos de la partida.
 - `argv[3]`: ruta por defecto de `GUARDAR` cuando se invoca sin argumento.
-
+  
 ## Pruebas de memoria
 
 ```bash
