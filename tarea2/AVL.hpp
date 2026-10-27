@@ -23,10 +23,13 @@ public:
     bool buscar(int id, Carta& out) const;
     void guardarRecorridos(ostream& salida) const;
     void clear();
-    void actualizarAltura(tNodoAVL* n);
+
+    tAVL(const tAVL&) = delete;
+    tAVL& operator=(const tAVL&) = delete;
 
 private:
     tNodoAVL* raiz;
+    void actualizarAltura(tNodoAVL* n);
     void preOrden(tNodoAVL* n, int prof, ostream& salida, bool& primero) const;
     void inOrden(tNodoAVL* n, int prof, ostream& salida, bool& primero) const;
     tNodoAVL* insertarRec(tNodoAVL* n, const Carta& c, bool& insertado);

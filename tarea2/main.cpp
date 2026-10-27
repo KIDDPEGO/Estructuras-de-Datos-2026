@@ -27,7 +27,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     if (argc != 4) {
-       cerr << "Uso correcto. ./tarea2 <inicio> <comandos> <salida>" << endl;
+        cerr << "Uso correcto. ./tarea2 <inicio> <comandos> <salida>" << endl;
         return 1;
     }
     tABB bestiario;
@@ -42,10 +42,10 @@ int main(int argc, char* argv[]) {
         return 2;
     }
     ifstream f(argv[2]);
-    if (!f.is_open()) { 
-      cerr << "El archivo" << argv[2] << "no se pudo abrir" << endl;
-      return 1;
-      }
+    if (!f.is_open()) {
+        cerr << "El archivo " << argv[2] << " no se pudo abrir" << endl;
+        return 1;
+    }
     f.close();
     procesarComandos(argv[2], argv[3], mano, tamMano,
                      mazo, descarte, horda, grimorio, bestiario);
