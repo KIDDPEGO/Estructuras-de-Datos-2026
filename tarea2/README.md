@@ -117,3 +117,7 @@ Sea n la cantidad de elementos de la estructura.
 | IMPRIMIR_BESTIARIO | O(n) | recorrido in-orden del ABB |
 | IMPRIMIR_AVL, GUARDAR | O(n) | recorridos pre-orden e in-orden del AVL |
 
+## Decisiones de diseño
+- **Tipos.hpp:** contiene los struct Carta y Enemigo, se uso enums para los efectos(NINGUNO,
+  FUEGO, HIELO, VENENO y CURACION) y el operator<< de Enemigo, declarado inline
+  para evitar errores de enlazado por definición múltiple.
