@@ -223,15 +223,22 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             }
         }
         else if (cmd == "IMPRIMIR_HORDA") {
-            int n = horda.tamanio();
             if(hayArg == true){
                 cerr << "ARGUMENTO EXTRA\n";
                 continue;
             }
-            if()
-            int n = horda.tamanio();
+            if(horda.vacia()){
+                cout << "HORDA: (vacia)\n";
+            }
+            else{
+                cout << "HORDA:";
+                int n = horda.tamanio();
             for (int i = 0; i < n; i++) {
-
+                Enemigo e = horda.desencolar();
+                cout << " " << e.id << "(vida=" << e.vidaActual << ")";
+                horda.encolar(e);
+                }
+                cout << "\n";
             }
         }
         else if (cmd == "IMPRIMIR_BESTIARIO") {
@@ -255,7 +262,23 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             grimorio.guardarRecorridos(cout);
         }
         else if (cmd == "GUARDAR") {
-            cerr << "TODO GUARDAR\n";
+            if(hayExtra == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            string ruta = rutaSalida;
+            if(hayArg){
+                ruta = arg;
+            }
+            ofstream archivo(ruta);
+            if (!archivo) {
+                cerr << "NO SE PUDO ABRIR ARCHIVO\n";
+                continue;
+            }
+            else {
+                grimorio.guardarRecorridos(archivo);
+                cout << "GUARDADO " << ruta << "\n";
+            }
         }
         else {
             cerr << "Aviso: comando desconocido " << cmd << "\n";
