@@ -151,7 +151,7 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
                 continue;
             }
             if(pos < 1 || pos > tamMano){
-                cout << "DESCARTAR " << pos << " -> " << arg << "\n";
+                cout << "DESCARTAR " << arg << " -> POS_INVALIDA\n";
                 continue;
             }
             Carta c = mano[pos - 1];
