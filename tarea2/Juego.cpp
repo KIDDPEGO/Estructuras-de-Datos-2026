@@ -23,7 +23,7 @@ static bool validarPos(const string& texto, int& valor) {
     return true;
 }
 int minimo(int a, int b){
-    if(a>b) return a;
+    if(a<b) return a;
     else return b;
 }
 
@@ -223,10 +223,29 @@ void procesarComandos(const string& rutaComandos, const string& rutaSalida,
             }
         }
         else if (cmd == "IMPRIMIR_HORDA") {
-            cerr << "TODO IMPRIMIR_HORDA\n";
+            int n = horda.tamanio();
+            if(hayArg == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            if()
+            int n = horda.tamanio();
+            for (int i = 0; i < n; i++) {
+
+            }
         }
         else if (cmd == "IMPRIMIR_BESTIARIO") {
-            cerr << "TODO IMPRIMIR_BESTIARIO\n";
+            if(hayArg == true){
+                cerr << "ARGUMENTO EXTRA\n";
+                continue;
+            }
+            cout << "BESTIARIO (in-orden):\n";
+            if(bestiario.vacio()){
+                cout << "  (vacio)\n";
+            }
+            else {
+                 bestiario.inOrden(cout);
+            }
         }
         else if (cmd == "IMPRIMIR_AVL") {
             if(hayArg == true){
