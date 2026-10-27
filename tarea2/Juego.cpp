@@ -5,7 +5,21 @@
 #include <cstdlib>
 #include "Juego.hpp"
 using namespace std;
-
+/* ****
+*    bool validarPos
+******
+*    Valida el argumento posicional de un comando (JUGAR, DESCARTAR).
+*    Es valido solo si esta formado unicamente por digitos ASCII, sin
+*    ceros a la izquierda (salvo el 0 solo) y si cabe en un int de 32
+*    bits. Si es valido, deja el numero convertido en valor.
+******
+*    Input :
+*        const string& texto : argumento tal como aparece en el comando
+*        int& valor : variable donde se deja el numero convertido
+******
+*    Returns :
+*        bool, true si el formato es valido, false en caso contrario
+**** */
 static bool validarPos(const string& texto, int& valor) {
     
     if(texto.empty()) return false;
@@ -22,11 +36,46 @@ static bool validarPos(const string& texto, int& valor) {
     valor = (int)n;
     return true;
 }
-int minimo(int a, int b){
+/* ****
+*    int minimo
+******
+*    Devuelve el menor de dos enteros.
+******
+*    Input :
+*        int a : primer valor
+*        int b : segundo valor
+******
+*    Returns :
+*        int, el menor entre a y b
+**** */
+static int minimo(int a, int b){
     if(a<b) return a;
     else return b;
 }
-
+/* ****
+*    void procesarComandos
+******
+*    Lee el archivo de comandos linea por linea y ejecuta cada comando en
+*    orden: ROBAR, JUGAR, DESCARTAR, ATACAR,
+*    IMPRIMIR_MANO, IMPRIMIR_HORDA, IMPRIMIR_BESTIARIO, IMPRIMIR_AVL y
+*    GUARDAR. Ignora lineas vacias y comentarios (#); el nombre del comando
+*    no distingue mayusculas. Lleva internamente el estado de la partida
+*    (vida del jugador, energia, turno y las banderas de derrota y victoria).
+******
+*    Input :
+*        const string& rutaComandos : archivo con los comandos de la partida
+*        const string& rutaSalida : ruta por defecto de GUARDAR
+*        Carta mano[5] : mano del jugador
+*        int& tamMano : cantidad de cartas que hay en la mano
+*        tPila& mazo : mazo de robo
+*        tPila& descarte : pila de descarte
+*        tCola& horda : enemigos de la sala
+*        tAVL& grimorio : arbol AVL con las cartas
+*        tABB& bestiario : arbol ABB con los enemigos
+******
+*    Returns :
+*        void
+**** */
 void procesarComandos(const string& rutaComandos, const string& rutaSalida,
                       Carta mano[5], int& tamMano,
                       tPila& mazo, tPila& descarte,
