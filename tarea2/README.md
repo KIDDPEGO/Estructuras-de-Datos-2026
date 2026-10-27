@@ -72,4 +72,48 @@ valgrind --leak-check=full --show-leak-kinds=all ./tarea2 inicio.txt partida.txt
 ```
 
 ## Mapeo mecánica → TDA
+ 
+| Mecánica del juego | TDA | Archivos |
+|---|---|---|
+| Mazo de robo y pila de descarte | Pila tPila  | Pila.hpp/.cpp |
+| Horda de enemigos de la sala | Cola tCola | Cola.hpp/.cpp |
+| Bestiario de enemigos | Árbol de búsqueda binario tABB | ABB.hpp/.cpp |
+| Grimorio de cartas | Árbol AVL tAVL | AVL.hpp/.cpp |
+| Mano del jugador | Arreglo estático de 5 Carta (no es TDA) | Juego.cpp |
+| Orquestación del juego | — | Juego.hpp/.cpp y main.cpp |
+ 
+Por qué cada estructura:
+ 
+- **Pila para mazo y descarte:** siempre se roba del tope del mazo y se descarta
+  sobre el tope del descarte.
+- **Cola para la horda:** el enemigo que lleva más tiempo esperando es el que
+  recibe los golpes, y al morir sale el primero y avanza el siguiente.
+- **ABB para el bestiario:** se consulta por id y se imprime ordenado por id con
+  un recorrido in-orden.
+- **AVL para el grimorio:** las cartas se buscan por id y se exportan a
+  arbol.txt; el balanceo garantiza búsquedas e inserciones en O(log n).
+  
+## Complejidades
+ 
+Sea n la cantidad de elementos de la estructura.
+ 
+| Operación | Complejidad | Justificación |
+|---|---|---|
+| Pila: push, pop, topValue | O(1) | solo se modifica o lee el nodo del tope, sin recorrer la lista |
+| Pila: clear | O(n) | recorre y libera cada nodo una vez |
+| Cola: encolar, desencolar, frenteValue, frenteRef | O(1) | se mantienen punteros al frente y al fin, por lo que no hay recorrido |
+| Cola: clear | O(n) | libera cada nodo una vez |
+| ABB: insertar, buscar | O(log n) promedio, O(n) en el peor caso | en cada paso se descarta un subárbol; si las claves llegan ordenadas, el árbol degenera en una lista y su altura es n |
+| ABB: inOrden, clear | O(n) | visitan cada nodo una vez |
+| AVL: insertar, buscar | O(log n) garantizado | el balanceo mantiene \|FB\| ≤ 1 en todo nodo, por lo que la altura es O(log n) y se baja un solo camino |
+| AVL: rotación simple o doble | O(1) | reasignan una cantidad fija de punteros y actualizan dos alturas; la doble compone dos simples |
+| AVL: recorridos pre-orden e in-orden, clear | O(n) | visitan cada nodo una vez |
+| ROBAR sin reciclaje | O(1) | un pop de la pila y una asignación en el arreglo de la mano |
+| ROBAR con reciclaje del descarte | O(n) | transfiere carta a carta con pop y push, cada una en O(1) |
+| JUGAR, DESCARTAR | O(1) | la mano tiene como máximo 5 cartas, por lo que correr las cartas cuesta una cantidad acotada de pasos; el daño usa frenteRef y desencolar, ambos O(1) |
+| ATACAR | O(1) | opera solo sobre el frente de la horda |
+| IMPRIMIR_MANO | O(1) | la mano tiene como máximo 5 cartas |
+| IMPRIMIR_HORDA | O(n) | rotación completa: desencolar, imprimir y encolar los n enemigos, cada paso en O(1) |
+| IMPRIMIR_BESTIARIO | O(n) | recorrido in-orden del ABB |
+| IMPRIMIR_AVL, GUARDAR | O(n) | recorridos pre-orden e in-orden del AVL |
 
