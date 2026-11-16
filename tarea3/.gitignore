@@ -1,0 +1,5 @@
+tarea3
+*.exe
+*.o
+salida.txt
+.vscode/
