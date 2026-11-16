@@ -1,6 +1,7 @@
 #ifndef ESTRUCTURAS_AUXILIARES_HPP
 #define ESTRUCTURAS_AUXILIARES_HPP
 #include <cstdlib>
+#include "Tipos.hpp"
 
 template <typename T>
 struct tNodoPila {
@@ -522,6 +523,206 @@ public:
             }
             listArray[j + 1] = clave;
         }
+    }
+};
+
+class MinHeap {
+private:
+    NodoHeap* datos;
+    int capacidad;
+    int tam;
+
+    /*****
+    * void redimensionar
+    ******
+    * Duplica la capacidad del arreglo dinamico del monticulo cuando se llena.
+    ******
+    * Input:
+    *   Ninguno.
+    ******
+    * Returns:
+    *   void, No retorna valor.
+    *****/
+    void redimensionar() {
+        int nueva_cap = (capacidad < 1) ? 1 : capacidad * 2;
+        NodoHeap* nuevo_arr = new NodoHeap[nueva_cap];
+        for (int i = 0; i < tam; i++) {
+            nuevo_arr[i] = datos[i];
+        }
+        delete[] datos;
+        datos = nuevo_arr;
+        capacidad = nueva_cap;
+    }
+
+    /*****
+    * void flotar
+    ******
+    * Restaura la propiedad de Min-Heap hacia arriba desde el indice dado.
+    ******
+    * Input:
+    *   int idx : Indice del elemento a reubicar hacia la raiz.
+    ******
+    * Returns:
+    *   void, No retorna valor.
+    *****/
+    void flotar(int idx) {
+        while (idx > 0) {
+            int padre = (idx - 1) / 2;
+            if (datos[idx].distancia < datos[padre].distancia) {
+                NodoHeap aux = datos[idx];
+                datos[idx] = datos[padre];
+                datos[padre] = aux;
+                idx = padre;
+            } else {
+                break;
+            }
+        }
+    }
+
+    /*****
+    * void hundir
+    ******
+    * Restaura la propiedad de Min-Heap hacia abajo desde el indice dado.
+    ******
+    * Input:
+    *   int idx : Indice del elemento a reubicar hacia las hojas.
+    ******
+    * Returns:
+    *   void, No retorna valor.
+    *****/
+    void hundir(int idx) {
+        while (true) {
+            int izq = 2 * idx + 1;
+            int der = 2 * idx + 2;
+            int menor = idx;
+
+            if (izq < tam && datos[izq].distancia < datos[menor].distancia) {
+                menor = izq;
+            }
+            if (der < tam && datos[der].distancia < datos[menor].distancia) {
+                menor = der;
+            }
+            if (menor != idx) {
+                NodoHeap aux = datos[idx];
+                datos[idx] = datos[menor];
+                datos[menor] = aux;
+                idx = menor;
+            } else {
+                break;
+            }
+        }
+    }
+
+    MinHeap(const MinHeap&) = delete;
+    MinHeap& operator=(const MinHeap&) = delete;
+
+public:
+    /*****
+    * Constructor MinHeap
+    ******
+    * Inicializa una cola de prioridad minima con capacidad inicial dinamica.
+    ******
+    * Input:
+    *   int cap_inicial : Capacidad inicial del arreglo (por defecto 16).
+    ******
+    * Returns:
+    *   Ninguno.
+    *****/
+    MinHeap(int cap_inicial = 16) {
+        if (cap_inicial < 1) {
+            cap_inicial = 1;
+        }
+        datos = new NodoHeap[cap_inicial];
+        capacidad = cap_inicial;
+        tam = 0;
+    }
+
+    /*****
+    * Destructor ~MinHeap
+    ******
+    * Libera la memoria dinamica utilizada por el monticulo.
+    ******
+    * Input:
+    *   Ninguno.
+    ******
+    * Returns:
+    *   Ninguno.
+    *****/
+    ~MinHeap() {
+        delete[] datos;
+    }
+
+    /*****
+    * bool vacio
+    ******
+    * Indica si el monticulo no contiene elementos en O(1).
+    ******
+    * Input:
+    *   Ninguno.
+    ******
+    * Returns:
+    *   bool, true si esta vacio, false en caso contrario.
+    *****/
+    bool vacio() const {
+        return tam == 0;
+    }
+
+    /*****
+    * void insertar
+    ******
+    * Inserta un par (vertice, distancia) en O(log n).
+    ******
+    * Input:
+    *   int vertice : Identificador del nodo.
+    *   int distancia : Costo acumulado hacia el nodo.
+    ******
+    * Returns:
+    *   void, No retorna valor.
+    *****/
+    void insertar(int vertice, int distancia) {
+        if (tam == capacidad) {
+            redimensionar();
+        }
+        datos[tam].vertice = vertice;
+        datos[tam].distancia = distancia;
+        flotar(tam);
+        tam++;
+    }
+
+    /*****
+    * NodoHeap extraerMin
+    ******
+    * Extrae y retorna el elemento con menor distancia en O(log n).
+    ******
+    * Input:
+    *   Ninguno.
+    ******
+    * Returns:
+    *   NodoHeap, Nodo con la menor distancia acumulada.
+    *****/
+    NodoHeap extraerMin() {
+        NodoHeap minimo = datos[0];
+        tam--;
+        if (tam > 0) {
+            datos[0] = datos[tam];
+            hundir(0);
+        }
+        return minimo;
+    }
+
+    /*****
+    * void clear
+    ******
+    * Vacia el monticulo de forma idempotente reiniciando su tamanio.
+    ******
+    * Input:
+    *   Ninguno.
+    ******
+    * Returns:
+    *   void, No retorna valor.
+    *****/
+    void clear() {
+        tam = 0;
     }
 };
 
