@@ -134,7 +134,7 @@ int Digrafo::obtenerNumNodos() const {
 *   int, Grado de salida de u.
 *****/
 int Digrafo::obtenerGradoSalida(int u) const {
-    return adyacencia[u].obtenerTamano();
+    return adyacencia[u].tamano();
 }
 
 /*****

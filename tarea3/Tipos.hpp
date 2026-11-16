@@ -8,4 +8,9 @@ struct Arista {
     int peso;
 };
 
+struct NodoHeap {
+    int vertice;
+    int distancia;
+};
+
 #endif
