@@ -135,3 +135,53 @@ int contar_zonas_logisticas(const Grafo &g) {
     delete[] dist;
     return contador;
 }
+/*****
+* int zonas_sin_nodo
+******
+* Cuenta las componentes conexas del grafo ignorando el nodo removido.
+******
+* Input:
+* const Grafo &g: grafo a analizar
+* int removido: nodo que se trata como inexistente
+******
+* Returns:
+* int, cantidad de componentes conexas sin contar el nodo removido
+*****/
+static int zonas_sin_nodo(const Grafo &g, int removido) {
+    int* dist = new int[g.numNodos()];
+    for (int i = 0; i < g.numNodos(); i++) {
+        dist[i] = -1;
+    }
+    int contador= 0;
+    dist[removido] = -2; 
+    for(int i=0;i<g.numNodos();i++){
+        if(dist[i]== -1){
+            contador++;
+            explorar(g, i, dist);
+        }
+    }
+    delete[] dist;
+    return contador;
+
+}
+
+/*****
+* void centros_criticos
+******
+* Deja en resultado los puntos de articulacion, de menor a mayor ID.
+******
+* Input:
+* const Grafo &g: grafo a analizar
+* Lista<int> &resultado: lista donde se dejan los centros criticos
+******
+* Returns:
+* void, no retorna valor
+*****/
+void centros_criticos(const Grafo &g, Lista<int> &resultado) {
+    int original = contar_zonas_logisticas(g);
+    for (int i=0; i<g.numNodos()-1;i++){
+        if(zonas_sin_nodo(g, i) > original){
+            resultado.agregar(i);
+        }
+    }
+}
