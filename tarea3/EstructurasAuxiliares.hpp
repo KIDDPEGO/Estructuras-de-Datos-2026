@@ -1,447 +1,527 @@
 #ifndef ESTRUCTURAS_AUXILIARES_HPP
 #define ESTRUCTURAS_AUXILIARES_HPP
+#include <cstdlib>
 
+template <typename T>
+struct tNodoPila {
+    T dato;
+    tNodoPila<T>* sig;
+    tNodoPila(const T& c) : dato(c), sig(NULL) {}
+};
+template <typename T>
+struct tNodoCola {
+    T dato;
+    tNodoCola<T>* sig;
+    tNodoCola(const T& e) : dato(e), sig(NULL) {}
+};
+template <typename T>
+class tCola {
+public:
+    tCola();
+    ~tCola();
+
+    void encolar(const T& dato);
+    T desencolar();
+    T frenteValue() const;
+    bool vacia() const;
+    int tamanio() const;
+    void clear();
+
+    tCola(const tCola&) = delete;
+    tCola& operator=(const tCola&) = delete;
+
+private:
+    tNodoCola<T>* frente;
+    tNodoCola<T>* fin;
+    int tam;
+};
+
+/* ****
+*    tCola<T>::tCola
+******
+*    Constructor por defecto. Inicializa la cola vacia.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        constructor (void)
+**** */
+template <typename T>
+tCola<T>::tCola() {
+    frente = NULL;
+    fin = NULL;
+    tam = 0;
+}
+
+/* ****
+*    tCola<T>::~tCola
+******
+*    Destructor. Libera todos los nodos iterativamente.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        destructor (void)
+**** */
+template <typename T>
+tCola<T>::~tCola() {
+    clear();
+}
+
+/* ****
+*    void tCola<T>::encolar
+******
+*    Inserta un T al final de la cola en O(1).
+******
+*    Input :
+*        const T& dato : T a encolar
+******
+*    Returns :
+*        void
+**** */
+template <typename T>
+void tCola<T>::encolar(const T& dato) {
+    tNodoCola<T>* nuevo = new tNodoCola<T>(dato);
+    if (vacia()) {
+        frente = nuevo;
+        fin = nuevo;
+    } else {
+        fin->sig = nuevo;
+        fin = nuevo;
+    }
+    tam++;
+}
+
+/* ****
+*    T tCola<T>::desencolar
+******
+*    Extrae y retorna el T del frente en O(1), liberando el nodo.
+*    Precondicion: !vacia()
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        T, el T desencolado
+**** */
+template <typename T>
+T tCola<T>::desencolar() {
+    tNodoCola<T>* aux = frente;
+    T e = aux->dato;
+    frente = frente->sig;
+    if (frente == NULL) {
+        fin = NULL;
+    }
+    delete aux;
+    tam--;
+    return e;
+}
+
+/* ****
+*    T tCola<T>::frenteValue
+******
+*    Retorna una copia del T al frente sin modificar la cola en O(1).
+*    Precondicion: !vacia()
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        T, copia del T frontal
+**** */
+template <typename T>
+T tCola<T>::frenteValue() const {
+    return frente->dato;
+}
+
+/* ****
+*    bool tCola<T>::vacia
+******
+*    Verifica si la cola esta vacia en O(1).
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        bool, true si tam == 0, false en caso contrario
+**** */
+template <typename T>
+bool tCola<T>::vacia() const {
+    return tam == 0;
+}
+
+/* ****
+*    int tCola<T>::tamanio
+******
+*    Retorna la cantidad actual de elementos en la cola en O(1).
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        int, tamano de la cola
+**** */
+template <typename T>
+int tCola<T>::tamanio() const {
+    return tam;
+}
+
+/* ****
+*    void tCola<T>::clear
+******
+*    Libera todos los nodos iterativamente en O(n) y restablece el estado.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        void
+**** */
+template <typename T>
+void tCola<T>::clear() {
+    while (frente != NULL) {
+        tNodoCola<T>* aux = frente;
+        frente = frente->sig;
+        delete aux;
+    }
+    fin = NULL;
+    tam = 0;
+}
+template <typename T>
+class tPila {
+public:
+    tPila();
+    ~tPila();
+
+    void push(const T& dato);
+    T pop();
+    T topValue() const;
+    bool vacia() const;
+    int tamanio() const;
+    void clear();
+
+    tPila(const tPila&) = delete;
+    tPila& operator=(const tPila&) = delete;
+
+private:
+    tNodoPila<T>* tope;
+    int tam;
+};
+
+/* ****
+*    tPila<T>::tPila
+******
+*    Constructor por defecto. Inicializa la pila vacia.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        constructor (void)
+**** */
+template <typename T>
+tPila<T>::tPila() {
+    tope = NULL;
+    tam = 0;
+}
+
+/* ****
+*    tPila<T>::~tPila
+******
+*    Destructor. Libera la memoria de todos los nodos iterativamente.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        destructor (void)
+**** */
+template <typename T>
+tPila<T>::~tPila() {
+    clear();
+}
+
+/* ****
+*    void tPila<T>::push
+******
+*    Inserta un T en el tope de la pila en O(1).
+******
+*    Input :
+*        const T& dato : T a insertar
+******
+*    Returns :
+*        void
+**** */
+template <typename T>
+void tPila<T>::push(const T& dato) {
+    tNodoPila<T>* nuevo = new tNodoPila<T>(dato);
+    nuevo->sig = tope;
+    tope = nuevo;
+    tam++;
+}
+
+/* ****
+*    T tPila<T>::pop
+******
+*    Extrae y retorna la T del tope en O(1), liberando el nodo.
+*    Precondicion: !vacia()
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        T, la T desapilada
+**** */
+template <typename T>
+T tPila<T>::pop() {
+    tNodoPila<T>* aux = tope;
+    T c = aux->dato;
+    tope = tope->sig;
+    delete aux;
+    tam--;
+    return c;
+}
+
+/* ****
+*    T tPila<T>::topValue
+******
+*    Retorna una copia de la T del tope sin retirarla en O(1).
+*    Precondicion: !vacia()
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        T, la T del tope
+**** */
+template <typename T>
+T tPila<T>::topValue() const {
+    return tope->dato;
+}
+
+/* ****
+*    bool tPila<T>::vacia
+******
+*    Verifica si la pila contiene elementos en O(1).
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        bool, true si tam == 0, false en caso contrario
+**** */
+template <typename T>
+bool tPila<T>::vacia() const {
+    return tam == 0;
+}
+
+/* ****
+*    int tPila<T>::tamanio
+******
+*    Retorna la cantidad actual de elementos en O(1).
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        int, tamano de la pila
+**** */
+template <typename T>
+int tPila<T>::tamanio() const {
+    return tam;
+}
+
+/* ****
+*    void tPila<T>::clear
+******
+*    Libera todos los nodos iterativamente en O(n) y restablece el estado.
+******
+*    Input :
+*        ninguno
+******
+*    Returns :
+*        void
+**** */
+template <typename T>
+void tPila<T>::clear() {
+    while (tope != NULL) {
+        tNodoPila<T>* aux = tope;
+        tope = tope->sig;
+        delete aux;
+    }
+    tam = 0;
+}
 template <typename T>
 class Lista {
 private:
-    T* datos;
-    int tamano;
-    int capacidad;
+    T* listArray;
+    int listSize;
+    int maxSize;
 
     /*****
-    * void redimensionar
+    * void agrandar
     ******
-    * Duplica la capacidad del arreglo dinamico copiando los elementos existentes.
+    * Duplica la capacidad del arreglo: reserva uno nuevo del doble de tamano,
+    * copia los elementos, libera el arreglo viejo y actualiza maxSize.
     ******
     * Input:
-    *   int nueva_capacidad : Nueva capacidad a reservar en memoria dinamica.
+    * void
     ******
     * Returns:
-    *   void, No retorna valor.
+    * void, no retorna valor
     *****/
-    void redimensionar(int nueva_capacidad) {
-        T* nuevo_arreglo = new T[nueva_capacidad];
-        for (int i = 0; i < tamano; i++) {
-            nuevo_arreglo[i] = datos[i];
+    void agrandar() {
+        int nuevaCap = maxSize * 2;
+        if (nuevaCap < 1) {
+            nuevaCap = 1;
         }
-        delete[] datos;
-        datos = nuevo_arreglo;
-        capacidad = nueva_capacidad;
+        T* nuevoArreglo = new T[nuevaCap];
+        for (int i = 0; i < listSize; i++) {
+            nuevoArreglo[i] = listArray[i];
+        }
+        delete[] listArray;
+        listArray = nuevoArreglo;
+        maxSize = nuevaCap;
     }
+
+    // La lista no se copia: evita doble delete[] sobre el mismo arreglo.
+    Lista(const Lista&);
+    Lista& operator=(const Lista&);
 
 public:
     /*****
-    * Constructor Lista
+    * Lista (constructor)
     ******
-    * Inicializa una lista dinamica vacia sin memoria asignada.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   Ninguno.
-    *****/
-    Lista() : datos(nullptr), tamano(0), capacidad(0) {}
-
-    /*****
-    * Constructor de Copia Lista
-    ******
-    * Crea una copia profunda de otra lista dinamica.
+    * Reserva memoria dinamica para la capacidad inicial indicada (minimo 1)
+    * y deja la lista vacia.
     ******
     * Input:
-    *   const Lista& otra : Lista origen a copiar.
+    * int capacidadInicial: Cantidad inicial de casillas (por defecto 1)
     ******
     * Returns:
-    *   Ninguno.
+    * No retorna valor
     *****/
-    Lista(const Lista& otra) : datos(nullptr), tamano(0), capacidad(0) {
-        for (int i = 0; i < otra.tamano; i++) {
-            agregar(otra.datos[i]);
+    Lista(int capacidadInicial = 1) {
+        if (capacidadInicial < 1) {
+            capacidadInicial = 1;
         }
+        listArray = new T[capacidadInicial];
+        maxSize = capacidadInicial;
+        listSize = 0;
     }
 
     /*****
-    * Lista& operator=
+    * ~Lista (destructor)
     ******
-    * Asigna profundamente el contenido de otra lista liberando la memoria previa.
-    ******
-    * Input:
-    *   const Lista& otra : Lista origen a asignar.
-    ******
-    * Returns:
-    *   Lista&, Referencia a la lista actual.
-    *****/
-    Lista& operator=(const Lista& otra) {
-        if (this != &otra) {
-            clear();
-            for (int i = 0; i < otra.tamano; i++) {
-                agregar(otra.datos[i]);
-            }
-        }
-        return *this;
-    }
-
-    /*****
-    * Destructor ~Lista
-    ******
-    * Libera toda la memoria dinamica reservada por la lista.
+    * Libera automaticamente la memoria dinamica del arreglo.
     ******
     * Input:
-    *   Ninguno.
+    * void
     ******
     * Returns:
-    *   Ninguno.
+    * No retorna valor
     *****/
     ~Lista() {
-        clear();
-    }
-
-    /*****
-    * void clear
-    ******
-    * Libera el arreglo dinamico de forma idempotente y reinicia contadores.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   void, No retorna valor.
-    *****/
-    void clear() {
-        if (datos != nullptr) {
-            delete[] datos;
-            datos = nullptr;
-        }
-        tamano = 0;
-        capacidad = 0;
+        delete[] listArray;
     }
 
     /*****
     * void agregar
     ******
-    * Inserta un elemento al final de la lista, redimensionando si es necesario.
+    * Agrega un elemento al final de la lista. Si el arreglo esta lleno,
+    * duplica su capacidad antes de insertar.
     ******
     * Input:
-    *   const T& valor : Elemento a insertar.
+    * const T &x: Elemento a agregar
     ******
     * Returns:
-    *   void, No retorna valor.
+    * void, no retorna valor
     *****/
-    void agregar(const T& valor) {
-        if (tamano == capacidad) {
-            int nueva_cap = (capacidad == 0) ? 4 : capacidad * 2;
-            redimensionar(nueva_cap);
+    void agregar(const T &x) {
+        if (listSize == maxSize) {
+            agrandar();
         }
-        datos[tamano++] = valor;
+        listArray[listSize] = x;
+        listSize++;
     }
 
     /*****
-    * int obtenerTamano
+    * T& obtener
     ******
-    * Retorna la cantidad actual de elementos almacenados en la lista.
+    * Entrega una referencia al elemento de la posicion i. El llamador debe
+    * asegurar 0 <= i < tamano().
     ******
     * Input:
-    *   Ninguno.
+    * int i: Posicion del elemento
     ******
     * Returns:
-    *   int, Cantidad de elementos.
+    * T&, referencia al elemento en la posicion i
     *****/
-    int obtenerTamano() const {
-        return tamano;
+    T& obtener(int i) {
+        return listArray[i];
+    }
+
+    const T& obtener(int i) const {
+        return listArray[i];
     }
 
     /*****
-    * bool estaVacia
+    * int tamano
     ******
-    * Indica si la lista no contiene elementos.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   bool, true si esta vacia, false en caso contrario.
-    *****/
-    bool estaVacia() const {
-        return tamano == 0;
-    }
-
-    /*****
-    * T obtener
-    ******
-    * Retorna el elemento ubicado en la posicion indicada.
+    * Entrega la cantidad de elementos almacenados.
     ******
     * Input:
-    *   int indice : Posicion del elemento (0 <= indice < tamano).
+    * void
     ******
     * Returns:
-    *   T, Copia del elemento almacenado en indice.
+    * int, cantidad de elementos de la lista
     *****/
-    T obtener(int indice) const {
-        return datos[indice];
-    }
-
-    /*****
-    * void establecer
-    ******
-    * Sobrescribe el elemento ubicado en la posicion indicada.
-    ******
-    * Input:
-    *   int indice : Posicion del elemento (0 <= indice < tamano).
-    *   const T& valor : Nuevo valor a almacenar.
-    ******
-    * Returns:
-    *   void, No retorna valor.
-    *****/
-    void establecer(int indice, const T& valor) {
-        datos[indice] = valor;
-    }
-};
-
-template <typename T>
-class Cola {
-private:
-    struct Nodo {
-        T dato;
-        Nodo* siguiente;
-        Nodo(const T& d) : dato(d), siguiente(nullptr) {}
-    };
-
-    Nodo* frente;
-    Nodo* final;
-    int tamano;
-
-public:
-    /*****
-    * Constructor Cola
-    ******
-    * Inicializa una cola FIFO vacia.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   Ninguno.
-    *****/
-    Cola() : frente(nullptr), final(nullptr), tamano(0) {}
-
-    /*****
-    * Destructor ~Cola
-    ******
-    * Libera iterativamente todos los nodos de la cola.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   Ninguno.
-    *****/
-    ~Cola() {
-        clear();
+    int tamano() const {
+        return listSize;
     }
 
     /*****
     * void clear
     ******
-    * Elimina iterativamente todos los nodos de forma idempotente.
+    * Vacia la lista y la deja con capacidad 1 (libera el arreglo anterior).
     ******
     * Input:
-    *   Ninguno.
+    * void
     ******
     * Returns:
-    *   void, No retorna valor.
+    * void, no retorna valor
     *****/
     void clear() {
-        while (frente != nullptr) {
-            Nodo* temporal = frente;
-            frente = frente->siguiente;
-            delete temporal;
+        delete[] listArray;
+        listArray = new T[1];
+        maxSize = 1;
+        listSize = 0;
+    }
+
+    /*****
+    * void ordenar
+    ******
+    * Ordena la lista de menor a mayor usando insercion directa. T debe
+    * tener definido operator<.
+    ******
+    * Input:
+    * void
+    ******
+    * Returns:
+    * void, no retorna valor
+    *****/
+    void ordenar() {
+        for (int i = 1; i < listSize; i++) {
+            T clave = listArray[i];
+            int j = i - 1;
+            while (j >= 0 && clave < listArray[j]) {
+                listArray[j + 1] = listArray[j];
+                j--;
+            }
+            listArray[j + 1] = clave;
         }
-        final = nullptr;
-        tamano = 0;
-    }
-
-    /*****
-    * void encolar
-    ******
-    * Inserta un elemento al final de la cola.
-    ******
-    * Input:
-    *   const T& valor : Elemento a encolar.
-    ******
-    * Returns:
-    *   void, No retorna valor.
-    *****/
-    void encolar(const T& valor) {
-        Nodo* nuevo = new Nodo(valor);
-        if (final == nullptr) {
-            frente = final = nuevo;
-        } else {
-            final->siguiente = nuevo;
-            final = nuevo;
-        }
-        tamano++;
-    }
-
-    /*****
-    * T desencolar
-    ******
-    * Extrae y retorna el elemento ubicado al frente de la cola.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   T, Elemento extraido del frente.
-    *****/
-    T desencolar() {
-        Nodo* temporal = frente;
-        T valor = temporal->dato;
-        frente = frente->siguiente;
-        if (frente == nullptr) {
-            final = nullptr;
-        }
-        delete temporal;
-        tamano--;
-        return valor;
-    }
-
-    /*****
-    * bool estaVacia
-    ******
-    * Verifica si la cola no tiene elementos.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   bool, true si esta vacia, false en caso contrario.
-    *****/
-    bool estaVacia() const {
-        return frente == nullptr;
-    }
-};
-
-template <typename T>
-class Pila {
-private:
-    struct Nodo {
-        T dato;
-        Nodo* siguiente;
-        Nodo(const T& d, Nodo* sig) : dato(d), siguiente(sig) {}
-    };
-
-    Nodo* tope;
-
-public:
-    /*****
-    * Constructor Pila
-    ******
-    * Inicializa una pila LIFO vacia.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   Ninguno.
-    *****/
-    Pila() : tope(nullptr) {}
-
-    /*****
-    * Destructor ~Pila
-    ******
-    * Libera iterativamente todos los nodos de la pila.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   Ninguno.
-    *****/
-    ~Pila() {
-        clear();
-    }
-
-    /*****
-    * void clear
-    ******
-    * Elimina iterativamente todos los nodos de forma idempotente.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   void, No retorna valor.
-    *****/
-    void clear() {
-        while (tope != nullptr) {
-            Nodo* temporal = tope;
-            tope = tope->siguiente;
-            delete temporal;
-        }
-    }
-
-    /*****
-    * void apilar
-    ******
-    * Inserta un elemento en el tope de la pila.
-    ******
-    * Input:
-    *   const T& valor : Elemento a apilar.
-    ******
-    * Returns:
-    *   void, No retorna valor.
-    *****/
-    void apilar(const T& valor) {
-        tope = new Nodo(valor, tope);
-    }
-
-    /*****
-    * T desapilar
-    ******
-    * Extrae y retorna el elemento en el tope de la pila.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   T, Elemento extraido del tope.
-    *****/
-    T desapilar() {
-        Nodo* temporal = tope;
-        T valor = temporal->dato;
-        tope = tope->siguiente;
-        delete temporal;
-        return valor;
-    }
-
-    /*****
-    * T verTope
-    ******
-    * Retorna el elemento en el tope sin extraerlo.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   T, Copia del elemento en el tope.
-    *****/
-    T verTope() const {
-        return tope->dato;
-    }
-
-    /*****
-    * bool estaVacia
-    ******
-    * Verifica si la pila no contiene elementos.
-    ******
-    * Input:
-    *   Ninguno.
-    ******
-    * Returns:
-    *   bool, true si esta vacia, false en caso contrario.
-    *****/
-    bool estaVacia() const {
-        return tope == nullptr;
     }
 };
 
