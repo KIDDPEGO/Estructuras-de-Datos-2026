@@ -28,6 +28,20 @@ static void explorar(const Grafo &g, int origen, int* dist) {
         }
     }
 }
+/*****
+* void bfs
+******
+* Calcula la distancia minima (en aristas) desde origen a cada nodo.
+* Deja -1 en los nodos no alcanzables.
+******
+* Input:
+* const Grafo &g: grafo a recorrer
+* int origen: nodo de partida
+* int* dist: arreglo de tamano g.numNodos() donde se dejan las distancias
+******
+* Returns:
+* void, no retorna valor
+*****/
 static void bfs(const Grafo &g, int origen, int* dist) {
 
     for(int i=0;i<g.numNodos();i++){
@@ -120,7 +134,6 @@ void sugerir_rutas_alternativas(const Grafo &g, int id_centro, Lista<int> &resul
 * int, cantidad de zonas logisticas
 *****/
 int contar_zonas_logisticas(const Grafo &g) {
-    dist = new int[g.numNodos()];
     int* dist = new int[g.numNodos()];
     for (int i = 0; i < g.numNodos(); i++) {
         dist[i] = -1;
@@ -129,7 +142,7 @@ int contar_zonas_logisticas(const Grafo &g) {
     for(int i=0;i<g.numNodos()-1;i++){
         if(dist[i]== -1){
             contador++;
-            explorar(g, v, dist);
+            explorar(g, i, dist);
         }
     }
     delete[] dist;
@@ -179,7 +192,7 @@ static int zonas_sin_nodo(const Grafo &g, int removido) {
 *****/
 void centros_criticos(const Grafo &g, Lista<int> &resultado) {
     int original = contar_zonas_logisticas(g);
-    for (int i=0; i<g.numNodos()-1;i++){
+    for (int i=0; i<g.numNodos();i++){
         if(zonas_sin_nodo(g, i) > original){
             resultado.agregar(i);
         }
