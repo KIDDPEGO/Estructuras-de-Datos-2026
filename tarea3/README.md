@@ -68,7 +68,21 @@ también compila si el comando no incluye ese `.cpp`.
 
 ## Ejecución
 
-<!-- Joaquín: completar con los argumentos reales de main (datos, flujos, consultas, salida). -->
+```bash
+make          # compila y genera el ejecutable tarea3
+make run      # compila y ejecuta, generando salida.txt
+make clean    # borra los objetos, el ejecutable y salida.txt
+```
+
+También se puede compilar directamente con el comando del enunciado:
+
+```bash
+g++ -Wall -Wextra -std=c++17 -o tarea3 main.cpp Grafo.cpp Digrafo.cpp Logistica.cpp
+./tarea3
+```
+
+El Makefile usa `-Wall -Wextra -std=c++17 -g` y compila todos los `.cpp`
+(`main`, `Grafo`, `Digrafo`, `EstructurasAuxiliares` y `Logistica`).
 
 ```bash
 make          # compila y genera el ejecutable tarea3
@@ -171,38 +185,50 @@ y n la de una cola.
 | `centros_criticos` | O(V·(V+E)) | calcula las zonas originales en O(V+E) y repite `zonas_sin_nodo`, que es O(V+E), una vez por cada nodo |
 
 <!-- Joaquín: agregar aquí las filas de Digrafo, MinHeap, RUTA y CONGESTION. -->
+## TDA Digrafo
 
-## Decisiones de diseño
+Representa la red de flujos como un digrafo dirigido y pesado, con listas de adyacencia
+de aristas valoradas.
 
-- **Funciones de análisis fuera del Grafo:** `Grafo` solo expone `numNodos`, `grado` y
-  `vecino`. Con esas tres consultas, `Logistica` puede recorrer toda la red.
-- **Cada arista se guarda dos veces:** el grafo es no dirigido, así que la línea `u v`
-  agrega `v` a la lista de `u` y `u` a la de `v`. La suma de todos los grados
-  debe dar `2·\|E\|`, y se usó como comprobación (42 en el ejemplo del enunciado).
-- **Copia deshabilitada:** `Grafo`, `Lista`, `tCola` y `tPila` declaran privados (o
-  `delete`) el constructor de copia y el `operator=`. Dos objetos que compartieran el
-  mismo arreglo harían doble `delete[]`.
-- **`dist` hace de lista de visitados:** un solo arreglo guarda la distancia y, a la vez,
-  indica si un nodo ya fue descubierto, así que no hace falta un arreglo `bool` aparte.
-- **`explorar` separado de `bfs`:** para contar zonas hay que no reiniciar `dist` entre
-  una componente y la siguiente, por lo que el llenado con `-1` se hace fuera de
-  `explorar`.
-- **CRITICOS por remoción de nodo, en vez de DFS con low-link:** el algoritmo de
-  puntos de articulación con DFS y valores low-link cuesta O(V+E), mejor que el
-  O(V·(V+E)) de esta versión. Se eligió la remoción por ser más simple de escribir y de
-  verificar, reutilizar `explorar` y `contar_zonas_logisticas`, y no requerir DFS
-  recursivo ni pila explícita. Un nodo `v` es crítico cuando, al bloquearlo, hay
-  **más** zonas que las originales; la comparación es `>` y no `!=` porque quitar un
-  nodo aislado reduce las zonas en 1 sin dividir nada.
-- **Bloqueo de nodos con `-2`:** `explorar` solo avanza por nodos con `-1`, así que
-  marcar uno con `-2` lo deja fuera del recorrido sin modificar el `Grafo`.
-- **Listas de resultados recibidas por referencia:** `sugerir_rutas_alternativas` y
-  `centros_criticos` reciben una `Lista<int>&` y la llenan, porque la copia de `Lista`
-  está deshabilitada y no puede devolverse por valor. Quien llama debe pasar una
-  lista vacía en cada consulta. La palabra `NINGUNO` la imprime `main` cuando
-  `resultado.tamano() == 0`.
-- **Sin validaciones de archivo:** el enunciado garantiza que los archivos existen y están
-  bien formados, y que no hay aristas repetidas ni auto-ciclos.
+| Atributo (privado) | Descripción |
+|---|---|
+| `int num_nodos` | cantidad de nodos (`\|V\|`) |
+| `int num_arcos` | cantidad de arcos (`\|E\|`) |
+| `Lista<Arista>* adyacencia` | arreglo de `num_nodos` listas; cada `Arista` guarda `destino` y `peso` |
 
+| Método | Qué hace |
+|---|---|
+| `cargarDesdeArchivo(nombre)` | lee `\|V\|`, `\|E\|` y los arcos `origen destino peso` de `flujos.txt` |
+| `agregarArco(u, v, peso)` | agrega el arco `u -> v` solo en la lista de `u`, porque es dirigido |
+| `obtenerNumNodos()` | devuelve la cantidad de nodos |
+| `obtenerGradoSalida(u)` | cantidad de arcos que salen de `u` |
+| `obtenerArco(u, i)` | i-ésimo arco saliente de `u`, por valor |
+| `clear()`, `~Digrafo()` | liberan las listas; `clear()` es idempotente |
+
+Los identificadores del digrafo son independientes de los de `datos.txt`.
+
+## Funciones de Logistica (6 y 7)
+
+| Función | Cómo funciona |
+|---|---|
+| `ruta_optima` | Dijkstra con `MinHeap`: se extrae el nodo de menor costo acumulado y se relajan sus arcos salientes. Un arreglo de predecesores permite reconstruir el camino. Si el destino queda en `INFINITO`, se informa `INALCANZABLE` |
+| `centros_en_congestion` | en una sola pasada por todos los arcos se suma el peso saliente de `u` y el peso entrante de `v`; un nodo está congestionado si entrante > saliente |
+
+| MinHeap: `insertar`, `extraerMin` | O(log n) | `flotar` y `hundir` recorren a lo sumo la altura del árbol, que es log n |
+| MinHeap: `vacio`, `clear` | O(1) | solo consultan o reinician el tamaño |
+| MinHeap: `redimensionar` | O(n) | copia los elementos al arreglo duplicado; ocurre pocas veces, por lo que `insertar` sigue siendo O(log n) amortizado |
+| Digrafo: `cargarDesdeArchivo` | O(V+E) | reserva `V` listas y agrega `E` arcos en O(1) amortizado cada uno |
+| Digrafo: `obtenerNumNodos`, `obtenerGradoSalida`, `obtenerArco` | O(1) | acceso por índice a una lista |
+| Digrafo: `clear` | O(V) | libera las `V` listas |
+| `ruta_optima` (Dijkstra con MinHeap) | O((V+E) log E), equivalente a O(E log V) | cada arco puede insertar un nodo en el heap (inserción perezosa, sin decrease-key), así que hay a lo sumo `E` inserciones y extracciones de O(log E); reconstruir el camino cuesta O(V) |
+| `centros_en_congestion` | O(V+E) | una pasada por los arcos acumula pesos entrantes y salientes y otra por los nodos compara; no hay ordenamientos |
+| Consulta SUGERIR/CRITICOS/CONGESTION: escritura | O(k) | k = cantidad de centros del resultado, que ya salen en orden ascendente |
+## Entrada y salida
+
+`main.cpp` carga ambos grafos y procesa secuencialmente `consultas.txt`. La primera línea
+indica la cantidad de consultas; cada una se interpreta por su etiqueta (`SUGERIR`,
+`HUB`, `ZONAS`, `COBERTURA`, `CRITICOS`, `RUTA`, `CONGESTION`) y su resultado se escribe
+en `salida.txt` en el formato del enunciado. Las listas salen en orden ascendente de ID
+y, si están vacías, se escribe `NINGUNO`. Una ruta inexistente se escribe `INALCANZABLE`.
 
 Se compiló con `-Wall -Wextra` sin warnings y se revisó con Valgrind sin fugas de memoria.
