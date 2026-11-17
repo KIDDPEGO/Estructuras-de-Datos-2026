@@ -245,3 +245,87 @@ void centros_en_congestion(const Digrafo& d, Lista<int>& resultado) {
     delete[] entrante;
     delete[] saliente;
 }
+
+/*****
+* int ruta_optima
+******
+* Calcula el camino de costo minimo entre id_origen e id_destino mediante
+* Dijkstra con Min-Heap en O((|V| + |E|) log |V|) y reconstruye la ruta.
+******
+* Input:
+*   const Digrafo& d : Digrafo pesado de flujos.
+*   int id_origen : Nodo de partida.
+*   int id_destino : Nodo de llegada.
+*   Lista<int>& camino : Lista donde se almacenan los nodos de la ruta en orden.
+******
+* Returns:
+*   int, Costo minimo total o INFINITO si el destino es inalcanzable.
+*****/
+int ruta_optima(const Digrafo& d, int id_origen, int id_destino, Lista<int>& camino) {
+    camino.clear();
+    int n = d.obtenerNumNodos();
+    if (n <= 0 || id_origen < 0 || id_origen >= n || id_destino < 0 || id_destino >= n) {
+        return INFINITO;
+    }
+
+    int* dist = new int[n];
+    int* padre = new int[n];
+    bool* visitado = new bool[n];
+
+    for (int i = 0; i < n; i++) {
+        dist[i] = INFINITO;
+        padre[i] = -1;
+        visitado[i] = false;
+    }
+
+    dist[id_origen] = 0;
+    MinHeap pq(n > 0 ? n : 1);
+    pq.insertar(id_origen, 0);
+
+    while (!pq.vacio()) {
+        NodoHeap actual = pq.extraerMin();
+        int u = actual.vertice;
+
+        if (visitado[u]) {
+            continue;
+        }
+        visitado[u] = true;
+
+        if (u == id_destino) {
+            break;
+        }
+
+        int grado_sal = d.obtenerGradoSalida(u);
+        for (int i = 0; i < grado_sal; i++) {
+            Arista arco = d.obtenerArco(u, i);
+            int v = arco.destino;
+            int peso = arco.peso;
+
+            if (!visitado[v] && dist[u] != INFINITO && dist[u] + peso < dist[v]) {
+                dist[v] = dist[u] + peso;
+                padre[v] = u;
+                pq.insertar(v, dist[v]);
+            }
+        }
+    }
+
+    int costo_final = dist[id_destino];
+
+    if (costo_final != INFINITO) {
+        tPila<int> pila_ruta;
+        int curr = id_destino;
+        while (curr != -1) {
+            pila_ruta.push(curr);
+            curr = padre[curr];
+        }
+        while (!pila_ruta.vacia()) {
+            camino.agregar(pila_ruta.pop());
+        }
+    }
+
+    delete[] dist;
+    delete[] padre;
+    delete[] visitado;
+
+    return costo_final;
+}
