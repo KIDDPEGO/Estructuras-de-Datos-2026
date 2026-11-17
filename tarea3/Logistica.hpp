@@ -11,6 +11,6 @@ int centro_mas_conectado(const Grafo& g);
 int contar_zonas_logisticas(const Grafo& g);
 int calcular_cobertura(const Grafo&, int id_centro);
 void centros_criticos(const Grafo&, Lista<int>& resultado);
-
+void centros_en_congestion(const Digrafo& d, Lista<int>& resultado);
 
 #endif

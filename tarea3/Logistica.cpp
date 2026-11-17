@@ -139,7 +139,7 @@ int contar_zonas_logisticas(const Grafo &g) {
         dist[i] = -1;
     }
     int contador=0;
-    for(int i=0;i<g.numNodos()-1;i++){
+    for(int i=0;i<g.numNodos();i++){
         if(dist[i]== -1){
             contador++;
             explorar(g, i, dist);
@@ -197,4 +197,51 @@ void centros_criticos(const Grafo &g, Lista<int> &resultado) {
             resultado.agregar(i);
         }
     }
+}
+
+/*****
+* void centros_en_congestion
+******
+* Identifica los nodos cuya suma de pesos de arcos entrantes supera la suma
+* de pesos de arcos salientes en tiempo O(|V| + |E|), ordenados ascendentemente.
+******
+* Input:
+*   const Digrafo& d : Digrafo pesado de flujos.
+*   Lista<int>& resultado : Lista donde se guardan los IDs congestionados.
+******
+* Returns:
+*   void, No retorna valor.
+*****/
+void centros_en_congestion(const Digrafo& d, Lista<int>& resultado) {
+    resultado.clear();
+    int n = d.obtenerNumNodos();
+    if (n <= 0) {
+        return;
+    }
+
+    long long* entrante = new long long[n];
+    long long* saliente = new long long[n];
+
+    for (int i = 0; i < n; i++) {
+        entrante[i] = 0;
+        saliente[i] = 0;
+    }
+
+    for (int u = 0; u < n; u++) {
+        int grado_sal = d.obtenerGradoSalida(u);
+        for (int i = 0; i < grado_sal; i++) {
+            Arista arco = d.obtenerArco(u, i);
+            saliente[u] += arco.peso;
+            entrante[arco.destino] += arco.peso;
+        }
+    }
+
+    for (int v = 0; v < n; v++) {
+        if (entrante[v] > saliente[v]) {
+            resultado.agregar(v);
+        }
+    }
+
+    delete[] entrante;
+    delete[] saliente;
 }
