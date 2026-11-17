@@ -1,4 +1,5 @@
 #include "Logistica.hpp"
+
 /*****
 * void explorar
 ******
@@ -14,10 +15,10 @@
 * void, no retorna valor
 *****/
 static void explorar(const Grafo &g, int origen, int* dist) {
-    dist[origen] = 0; 
+    dist[origen] = 0;
     tCola<int> cola;
     cola.encolar(origen);
-    while(!cola.vacia()){
+    while (!cola.vacia()) {
         int u = cola.desencolar();
         for (int i = 0; i < g.grado(u); i++) {
             int w = g.vecino(u, i);
@@ -28,6 +29,7 @@ static void explorar(const Grafo &g, int origen, int* dist) {
         }
     }
 }
+
 /*****
 * void bfs
 ******
@@ -43,12 +45,12 @@ static void explorar(const Grafo &g, int origen, int* dist) {
 * void, no retorna valor
 *****/
 static void bfs(const Grafo &g, int origen, int* dist) {
-
-    for(int i=0;i<g.numNodos();i++){
-        dist[i]=-1;
+    for (int i = 0; i < g.numNodos(); i++) {
+        dist[i] = -1;
     }
-   explorar(g, origen, dist);
+    explorar(g, origen, dist);
 }
+
 /*****
 * int centro_mas_conectado
 ******
@@ -62,6 +64,9 @@ static void bfs(const Grafo &g, int origen, int* dist) {
 * int, ID del centro con mayor numero de rutas directas
 *****/
 int centro_mas_conectado(const Grafo &g) {
+    if (g.numNodos() <= 0) {
+        return -1;
+    }
     int mejorID = 0;
     int mayorGrado = g.grado(0);
     for (int i = 1; i < g.numNodos(); i++) {
@@ -72,6 +77,7 @@ int centro_mas_conectado(const Grafo &g) {
     }
     return mejorID;
 }
+
 /*****
 * int calcular_cobertura
 ******
@@ -90,13 +96,14 @@ int calcular_cobertura(const Grafo &g, int id_centro) {
     bfs(g, id_centro, dist);
     int contador = 0;
     for (int i = 0; i < g.numNodos(); i++) {
-        if(dist[i]== 1 || dist[i] == 2){
+        if (dist[i] == 1 || dist[i] == 2) {
             contador++;
         }
     }
     delete[] dist;
     return contador;
 }
+
 /*****
 * void sugerir_rutas_alternativas
 ******
@@ -112,16 +119,18 @@ int calcular_cobertura(const Grafo &g, int id_centro) {
 * void, no retorna valor
 *****/
 void sugerir_rutas_alternativas(const Grafo &g, int id_centro, Lista<int> &resultado) {
+    resultado.clear();
     int* dist = new int[g.numNodos()];
     bfs(g, id_centro, dist);
     for (int i = 0; i < g.numNodos(); i++) {
-        if(dist[i] == 2){
+        if (dist[i] == 2) {
             resultado.agregar(i);
         }
     }
     delete[] dist;
     resultado.ordenar();
 }
+
 /*****
 * int contar_zonas_logisticas
 ******
@@ -135,12 +144,12 @@ void sugerir_rutas_alternativas(const Grafo &g, int id_centro, Lista<int> &resul
 *****/
 int contar_zonas_logisticas(const Grafo &g) {
     int* dist = new int[g.numNodos()];
-    for(int i=0;i<g.numNodos();i++){
+    for (int i = 0; i < g.numNodos(); i++) {
         dist[i] = -1;
     }
-    int contador=0;
-    for(int i=0;i<g.numNodos();i++){
-        if(dist[i]== -1){
+    int contador = 0;
+    for (int i = 0; i < g.numNodos(); i++) {
+        if (dist[i] == -1) {
             contador++;
             explorar(g, i, dist);
         }
@@ -148,6 +157,7 @@ int contar_zonas_logisticas(const Grafo &g) {
     delete[] dist;
     return contador;
 }
+
 /*****
 * int zonas_sin_nodo
 ******
@@ -165,17 +175,16 @@ static int zonas_sin_nodo(const Grafo &g, int removido) {
     for (int i = 0; i < g.numNodos(); i++) {
         dist[i] = -1;
     }
-    int contador= 0;
-    dist[removido] = -2; 
-    for(int i=0;i<g.numNodos();i++){
-        if(dist[i]== -1){
+    int contador = 0;
+    dist[removido] = -2;
+    for (int i = 0; i < g.numNodos(); i++) {
+        if (dist[i] == -1) {
             contador++;
             explorar(g, i, dist);
         }
     }
     delete[] dist;
     return contador;
-
 }
 
 /*****
@@ -191,9 +200,10 @@ static int zonas_sin_nodo(const Grafo &g, int removido) {
 * void, no retorna valor
 *****/
 void centros_criticos(const Grafo &g, Lista<int> &resultado) {
+    resultado.clear();
     int original = contar_zonas_logisticas(g);
-    for (int i=0; i<g.numNodos();i++){
-        if(zonas_sin_nodo(g, i) > original){
+    for (int i = 0; i < g.numNodos(); i++) {
+        if (zonas_sin_nodo(g, i) > original) {
             resultado.agregar(i);
         }
     }
@@ -301,10 +311,13 @@ int ruta_optima(const Digrafo& d, int id_origen, int id_destino, Lista<int>& cam
             int v = arco.destino;
             int peso = arco.peso;
 
-            if (!visitado[v] && dist[u] != INFINITO && dist[u] + peso < dist[v]) {
-                dist[v] = dist[u] + peso;
-                padre[v] = u;
-                pq.insertar(v, dist[v]);
+            if (!visitado[v] && dist[u] != INFINITO) {
+                long long nuevo_costo = static_cast<long long>(dist[u]) + peso;
+                if (nuevo_costo < dist[v]) {
+                    dist[v] = static_cast<int>(nuevo_costo);
+                    padre[v] = u;
+                    pq.insertar(v, dist[v]);
+                }
             }
         }
     }

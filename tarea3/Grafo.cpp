@@ -15,16 +15,23 @@ using namespace std;
 * No retorna valor
 *****/
 Grafo::Grafo(const char* nombreArchivo) {
-ifstream archivo(nombreArchivo);
-int m;
-archivo >> n >> m;
-adyacencia = new Lista<int>[n];
-for (int i=0; i<m;i++){
-    int u, v;
-    archivo >> u >> v;
-    adyacencia[u].agregar(v);
-    adyacencia[v].agregar(u);
-}
+    n = 0;
+    adyacencia = nullptr;
+    ifstream archivo(nombreArchivo);
+    if (!archivo.is_open()) {
+        return;
+    }
+    int m = 0;
+    archivo >> n >> m;
+    adyacencia = new Lista<int>[n];
+    for (int i = 0; i < m; i++) {
+        int u = 0;
+        int v = 0;
+        archivo >> u >> v;
+        adyacencia[u].agregar(v);
+        adyacencia[v].agregar(u);
+    }
+    archivo.close();
 }
 
 /*****
