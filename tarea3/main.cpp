@@ -1,121 +1,133 @@
 #include <fstream>
 #include <string>
+#include "Tipos.hpp"
+#include "EstructurasAuxiliares.hpp"
 #include "Grafo.hpp"
 #include "Digrafo.hpp"
 #include "Logistica.hpp"
-#include "EstructurasAuxiliares.hpp"
 
 /*****
-* void escribirLista
+* void escribirListaCentros
 ******
-* Escribe en el flujo de salida los elementos de una lista separados por un
-* unico espacio, o la palabra NINGUNO si la lista esta vacia.
+* Escribe en el archivo de salida los elementos de una lista de centros
+* separados por un espacio, o "NINGUNO" si la lista esta vacia.
 ******
 * Input:
-*   std::ofstream& out : Flujo de salida asociado a salida.txt.
-*   const Lista<int>& lista : Lista de enteros a escribir.
+*   std::ofstream& salida : Flujo de salida abierto hacia salida.txt.
+*   const Lista<int>& lista : Lista ordenada ascendentemente de IDs de centros.
 ******
 * Returns:
 *   void, No retorna valor.
 *****/
-static void escribirLista(std::ofstream& out, const Lista<int>& lista) {
-    if (lista.tamano() == 0) {
-        out << "NINGUNO";
+static void escribirListaCentros(std::ofstream& salida, const Lista<int>& lista) {
+    int n = lista.tamano();
+    if (n == 0) {
+        salida << "NINGUNO";
         return;
     }
-    for (int i = 0; i < lista.tamano(); i++) {
+    for (int i = 0; i < n; i++) {
         if (i > 0) {
-            out << " ";
+            salida << " ";
         }
-        out << lista.obtener(i);
+        salida << lista.obtener(i);
     }
 }
 
 /*****
 * int main
 ******
-* Punto de entrada del programa. Carga la red logistica desde datos.txt y
-* flujos.txt, procesa secuencialmente las consultas de consultas.txt y
-* escribe los resultados en salida.txt.
+* Punto de entrada del programa. Carga la red de conectividad (datos.txt) y
+* la red de flujos (flujos.txt), procesa secuencialmente las consultas desde
+* consultas.txt y escribe los resultados en salida.txt sin emitir salida por consola.
 ******
 * Input:
 *   Ninguno.
 ******
 * Returns:
-*   int, 0 si la ejecucion finaliza correctamente, 1 si falla la apertura de archivos.
+*   int, Codigo de estado de ejecucion (0 si finaliza correctamente).
 *****/
 int main() {
-    Grafo grafo("datos.txt");
-    Digrafo digrafo;
-    if (!digrafo.cargarDesdeArchivo("flujos.txt")) {
-        return 1;
-    }
+    Grafo red_conectividad("datos.txt");
+
+    Digrafo red_flujos;
+    red_flujos.cargarDesdeArchivo("flujos.txt");
 
     std::ifstream consultas("consultas.txt");
-    if (!consultas.is_open()) {
-        return 1;
-    }
-
     std::ofstream salida("salida.txt");
-    if (!salida.is_open()) {
-        consultas.close();
+
+    if (!consultas.is_open() || !salida.is_open()) {
         return 1;
     }
 
-    int total_consultas = 0;
-    consultas >> total_consultas;
+    int num_consultas = 0;
+    consultas >> num_consultas;
 
-    Lista<int> resultado;
+    for (int i = 0; i < num_consultas; i++) {
+        std::string comando;
+        consultas >> comando;
 
-    for (int i = 0; i < total_consultas; i++) {
-        std::string tipo;
-        consultas >> tipo;
-
-        if (tipo == "SUGERIR") {
+        if (comando == "SUGERIR") {
             int id_centro = 0;
             consultas >> id_centro;
-            sugerir_rutas_alternativas(grafo, id_centro, resultado);
+
+            Lista<int> resultado;
+            sugerir_rutas_alternativas(red_conectividad, id_centro, resultado);
+
             salida << "SUGERIR " << id_centro << ": ";
-            escribirLista(salida, resultado);
+            escribirListaCentros(salida, resultado);
             salida << "\n";
-        } else if (tipo == "HUB") {
-            int hub = centro_mas_conectado(grafo);
+        } else if (comando == "HUB") {
+            int hub = centro_mas_conectado(red_conectividad);
             salida << "HUB: " << hub << "\n";
-        } else if (tipo == "ZONAS") {
-            int zonas = contar_zonas_logisticas(grafo);
+        } else if (comando == "ZONAS") {
+            int zonas = contar_zonas_logisticas(red_conectividad);
             salida << "ZONAS: " << zonas << "\n";
-        } else if (tipo == "COBERTURA") {
+        } else if (comando == "COBERTURA") {
             int id_centro = 0;
             consultas >> id_centro;
-            int cob = calcular_cobertura(grafo, id_centro);
-            salida << "COBERTURA " << id_centro << ": " << cob << "\n";
-        } else if (tipo == "CRITICOS") {
-            centros_criticos(grafo, resultado);
+
+            int cobertura = calcular_cobertura(red_conectividad, id_centro);
+            salida << "COBERTURA " << id_centro << ": " << cobertura << "\n";
+        } else if (comando == "CRITICOS") {
+            Lista<int> criticos;
+            centros_criticos(red_conectividad, criticos);
+
             salida << "CRITICOS: ";
-            escribirLista(salida, resultado);
+            escribirListaCentros(salida, criticos);
             salida << "\n";
-        } else if (tipo == "RUTA") {
-            int origen = 0;
-            int destino = 0;
-            consultas >> origen >> destino;
-            int costo = ruta_optima(digrafo, origen, destino, resultado);
-            salida << "RUTA " << origen << " " << destino << ": ";
+        } else if (comando == "RUTA") {
+            int id_origen = 0;
+            int id_destino = 0;
+            consultas >> id_origen >> id_destino;
+
+            Lista<int> camino;
+            int costo = ruta_optima(red_flujos, id_origen, id_destino, camino);
+
+            salida << "RUTA " << id_origen << " " << id_destino << ": ";
             if (costo == INFINITO) {
                 salida << "INALCANZABLE\n";
             } else {
                 salida << "costo " << costo << ", camino ";
-                escribirLista(salida, resultado);
+                for (int j = 0; j < camino.tamano(); j++) {
+                    if (j > 0) {
+                        salida << " ";
+                    }
+                    salida << camino.obtener(j);
+                }
                 salida << "\n";
             }
-        } else if (tipo == "CONGESTION") {
-            centros_en_congestion(digrafo, resultado);
+        } else if (comando == "CONGESTION") {
+            Lista<int> congestionados;
+            centros_en_congestion(red_flujos, congestionados);
+
             salida << "CONGESTION: ";
-            escribirLista(salida, resultado);
+            escribirListaCentros(salida, congestionados);
             salida << "\n";
         }
     }
 
     consultas.close();
     salida.close();
+
     return 0;
 }
