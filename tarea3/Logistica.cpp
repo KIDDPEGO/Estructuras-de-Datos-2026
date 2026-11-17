@@ -135,7 +135,7 @@ void sugerir_rutas_alternativas(const Grafo &g, int id_centro, Lista<int> &resul
 *****/
 int contar_zonas_logisticas(const Grafo &g) {
     int* dist = new int[g.numNodos()];
-    for (int i = 0; i < g.numNodos(); i++) {
+    for(int i=0;i<g.numNodos();i++){
         dist[i] = -1;
     }
     int contador=0;
